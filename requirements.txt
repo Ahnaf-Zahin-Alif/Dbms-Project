@@ -9,5 +9,3 @@ sqlparse
 mysqlclient
 python-dotenv
 gunicorn
-gunicorn
-python-dotenv
