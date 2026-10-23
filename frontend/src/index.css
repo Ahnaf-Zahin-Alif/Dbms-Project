@@ -1,1 +1,56 @@
 @import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
+    background-color: #070A1E;
+    color: #ffffff;
+    overflow-x: hidden;
+  }
+}
+
+/* Cinematic Serif Font */
+.font-cinzel {
+  font-family: 'Cinzel', Georgia, serif;
+}
+
+/* Gold Glitter Text */
+.gold-glitter-text {
+  background: linear-gradient(135deg, #ECC86C 0%, #FFF3B3 22%, #AA771C 48%, #FFDF73 72%, #9B6C14 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8));
+}
+
+/* Bronze Sidebar Navigation Button */
+.bronze-nav-btn {
+  background: linear-gradient(180deg, #4A3E2D 0%, #3B3022 50%, #2A2116 100%);
+  border-top: 1px solid rgba(220, 185, 115, 0.35);
+  border-bottom: 1px solid rgba(15, 10, 5, 0.85);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 2px 4px rgba(0, 0, 0, 0.5);
+  transition: all 0.2s ease-in-out;
+}
+
+.bronze-nav-btn:hover {
+  background: linear-gradient(180deg, #5D4F3A 0%, #483A2A 50%, #34281B 100%);
+  border-top: 1px solid rgba(245, 215, 140, 0.65);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 10px rgba(212, 175, 55, 0.3);
+}
+
+.bronze-nav-btn:active {
+  transform: translateY(1px);
+}
+
+/* Vertical Gold Accent Line */
+.gold-accent-line {
+  background: linear-gradient(180deg, #EDD16D 0%, #D4AF37 50%, #EDD16D 100%);
+  box-shadow: 0 0 8px rgba(237, 209, 109, 0.6);
+}
+
+/* The Odyssey Terracotta/Copper Title */
+.odyssey-title {
+  background: linear-gradient(180deg, #D96A42 0%, #C34B2B 55%, #8B2C13 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.9));
+}

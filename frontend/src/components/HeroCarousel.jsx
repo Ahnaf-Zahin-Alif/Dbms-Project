@@ -2,107 +2,154 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 export default function HeroCarousel({ movies = [] }) {
-  // Default slides if backend has no backdrop yet
-  const defaultSlides = [
+  // Curated hero slides matching Wireframe Page 2 perfectly
+  const slides = [
     {
       id: "odyssey",
-      title: "THE ODYSSEY",
+      movieTitle: "The Odyssey",
       director: "A FILM BY CHRISTOPHER NOLAN",
-      tagline: "SHOT ENTIRELY WITH IMAX FILM CAMERAS",
+      title: "THE ODYSSEY",
       date: "07.17.26",
+      tagline: (
+        <>
+          SHOT ENTIRELY WITH <span className="font-bold text-white tracking-widest">IMAX</span> FILM CAMERAS
+        </>
+      ),
+      backdrop: "/images/the-odyssey-card.png",
+      titleColor: "odyssey-title",
+      movieId: movies.find((m) => m.title.toLowerCase().includes("odyssey"))?.id || 2,
+    },
+    {
+      id: "clayface",
+      movieTitle: "Clayface",
+      director: "DC STUDIOS PRESENTS",
+      title: "CLAYFACE",
+      date: "10.30.26",
+      tagline: (
+        <>
+          EXPERIENCE THE TERROR IN <span className="font-bold text-white tracking-widest">IMAX</span>
+        </>
+      ),
       backdrop:
-        "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1600&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1600&auto=format&fit=crop",
+      titleColor: "gold-glitter-text",
+      movieId: movies.find((m) => m.title.toLowerCase().includes("clayface"))?.id || 4,
+    },
+    {
+      id: "supergirl",
+      movieTitle: "Supergirl",
+      director: "DC STUDIOS & WARNER BROS.",
+      title: "SUPERGIRL",
+      date: "06.26.26",
+      tagline: (
+        <>
+          WOMAN OF TOMORROW &bull; IN <span className="font-bold text-white tracking-widest">IMAX 3D</span>
+        </>
+      ),
+      backdrop:
+        "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1600&auto=format&fit=crop",
+      titleColor: "text-amber-200",
+      movieId: movies.find((m) => m.title.toLowerCase().includes("supergirl"))?.id || 5,
     },
     {
       id: "spiderman",
-      title: "SPIDER-MAN: BRAND NEW DAY",
-      director: "MARVEL STUDIOS",
-      tagline: "EXPERIENCE IT IN IMAX 2D & 3D",
+      movieTitle: "Spider-Man: Brand New Day (2D)",
+      director: "MARVEL STUDIOS & SONY PICTURES",
+      title: "SPIDER-MAN",
       date: "07.30.26",
+      tagline: (
+        <>
+          EXPERIENCE IT IN <span className="font-bold text-white tracking-widest">IMAX 2D & 3D</span>
+        </>
+      ),
       backdrop:
         "https://images.unsplash.com/photo-1635805737707-575885ab0820?q=80&w=1600&auto=format&fit=crop",
+      titleColor: "text-red-500",
+      movieId: movies.find((m) => m.title.toLowerCase().includes("spider"))?.id || 1,
     },
   ];
 
-  // Combine with real movies if they have backdrops
-  const realSlides = movies
-    .filter((m) => m.backdrop_url)
-    .map((m) => ({
-      id: m.id,
-      title: m.title.toUpperCase(),
-      director: m.actors ? `STARRING ${m.actors.slice(0, 40)}...` : "NOW SHOWING",
-      tagline: `${m.category} FORMAT • ${m.duration_minutes} MINS`,
-      date: m.release_date,
-      backdrop: m.backdrop_url,
-      movieId: m.id,
-    }));
-
-  const slides = realSlides.length > 0 ? realSlides : defaultSlides;
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  // Auto-advance slides every 6 seconds
   useEffect(() => {
-    if (slides.length <= 1) return;
     const timer = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % slides.length);
     }, 6000);
     return () => clearInterval(timer);
   }, [slides.length]);
 
-  const current = slides[currentIndex] || defaultSlides[0];
+  const current = slides[currentIndex];
+
+  // We show 11 indicator slots to match Wireframe Page 2 exactly
+  const totalIndicators = 11;
 
   return (
-    <div className="relative w-full h-[60vh] md:h-[75vh] max-h-[700px] overflow-hidden bg-black select-none">
-      {/* Background Image with Cinematic Vignette Overlay */}
+    <div className="relative w-full h-[360px] sm:h-[440px] md:h-[500px] lg:h-[520px] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border border-blue-900/30 group bg-black select-none">
+      {/* Background Backdrop */}
       <div
-        className="absolute inset-0 bg-cover bg-center transition-all duration-1000 transform scale-105"
+        className="absolute inset-0 bg-cover bg-center transition-all duration-1000 ease-out transform group-hover:scale-105"
         style={{ backgroundImage: `url(${current.backdrop})` }}
       >
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0B0E1E] via-[#0B0E1E]/40 to-transparent" />
-        <div className="absolute inset-0 bg-radial from-transparent via-[#0B0E1E]/30 to-[#0B0E1E]" />
+        {/* Cinematic Vignette Overlays */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/40" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-transparent to-black/50" />
       </div>
 
-      {/* Hero Typography Matching Wireframe Page 2 */}
-      <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 max-w-4xl mx-auto">
-        <p className="text-xs md:text-sm tracking-[0.3em] font-semibold text-[#D4AF37] uppercase drop-shadow">
+      {/* Cinematic Typography Overlay (if not already burned into the card) */}
+      <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 md:px-8 max-w-3xl mx-auto">
+        {/* Director / Studio Line */}
+        <p className="text-[11px] sm:text-xs md:text-sm tracking-[0.3em] font-medium text-[#C89B48] uppercase drop-shadow-md mb-2">
           {current.director}
         </p>
 
-        <h1 className="text-3xl md:text-6xl font-extrabold tracking-[0.2em] text-[#D4AF37] my-3 drop-shadow-[0_4px_20px_rgba(212,175,55,0.4)] font-serif">
+        {/* Hero Title */}
+        <h1
+          className={`text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-cinzel font-black tracking-[0.22em] my-1 drop-shadow-[0_4px_25px_rgba(0,0,0,0.9)] ${current.titleColor}`}
+        >
           {current.title}
         </h1>
 
-        <p className="text-xl md:text-2xl font-bold tracking-[0.25em] text-[#E5C158] mb-2 font-mono">
+        {/* Date */}
+        <p className="text-xl sm:text-2xl md:text-3xl font-cinzel font-bold tracking-[0.25em] text-[#C86D49] my-2 drop-shadow-md">
           {current.date}
         </p>
 
-        <p className="text-xs md:text-sm tracking-[0.2em] text-gray-300 uppercase font-light">
+        {/* Tagline / Format */}
+        <p className="text-[10px] sm:text-xs md:text-sm tracking-[0.2em] text-[#E0D0B5] uppercase font-medium drop-shadow">
           {current.tagline}
         </p>
 
+        {/* Quick Ticket Action */}
         {current.movieId && (
           <Link
             to={`/movie/${current.movieId}`}
-            className="mt-6 inline-block bg-[#D4AF37] hover:bg-[#F3E5AB] text-gray-950 font-bold px-8 py-2.5 rounded-full text-xs tracking-widest uppercase transition shadow-[0_0_20px_rgba(212,175,55,0.4)]"
+            className="mt-6 inline-flex items-center gap-2 bg-[#D4AF37] hover:bg-[#F3E5AB] text-gray-950 font-bold px-6 py-2 rounded-full text-xs tracking-widest uppercase transition-all shadow-[0_0_20px_rgba(212,175,55,0.4)] hover:scale-105"
           >
             GET TICKETS
           </Link>
         )}
       </div>
 
-      {/* Dashed Progress Indicators (Page 2 Bottom Slider) */}
-      <div className="absolute bottom-6 left-0 right-0 z-20 flex justify-center items-center gap-2">
-        {slides.map((_, idx) => (
-          <button
-            key={idx}
-            onClick={() => setCurrentIndex(idx)}
-            className={`h-1 rounded-full transition-all duration-300 ${
-              idx === currentIndex
-                ? "w-10 bg-[#D4AF37]"
-                : "w-5 bg-gray-600/70 hover:bg-gray-400"
-            }`}
-            aria-label={`Slide ${idx + 1}`}
-          />
-        ))}
+      {/* Wireframe Page 2 Bottom Slider Dashes Indicator (~11 dashes) */}
+      <div className="absolute bottom-5 left-0 right-0 z-20 flex justify-center items-center gap-1.5 sm:gap-2">
+        {Array.from({ length: totalIndicators }).map((_, idx) => {
+          // Map index to slide index
+          const isActive = idx === currentIndex;
+          return (
+            <button
+              key={idx}
+              onClick={() => setCurrentIndex(idx % slides.length)}
+              className={`transition-all duration-300 cursor-pointer ${
+                isActive
+                  ? "w-8 sm:w-11 h-2 sm:h-2.5 rounded-xs border-2 border-[#D4AF37] bg-[#755025]/70 shadow-[0_0_8px_rgba(212,175,55,0.5)]"
+                  : "w-4 sm:w-6 h-1 rounded-full bg-[#B38D40]/50 hover:bg-[#D4AF37]"
+              }`}
+              title={`Slide ${(idx % slides.length) + 1}`}
+              aria-label={`Go to slide ${(idx % slides.length) + 1}`}
+            />
+          );
+        })}
       </div>
     </div>
   );

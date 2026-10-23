@@ -89,6 +89,36 @@ class Command(BaseCommand):
             },
         )
 
+        m4, _ = Movie.objects.get_or_create(
+            title="Clayface",
+            defaults={
+                "category": "IMAX",
+                "actors": "Bill Skarsgard, Max Minghella, Kate Mara",
+                "genre": "Horror / Action / Mystery",
+                "release_date": date(2026, 10, 30),
+                "language": "English",
+                "duration_minutes": 135,
+                "poster_url": "https://images.unsplash.com/photo-1509281373149-e957c6296406?q=80&w=800&auto=format&fit=crop",
+                "backdrop_url": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1600&auto=format&fit=crop",
+                "status": Movie.StatusChoice.NOW_SHOWING,
+            },
+        )
+
+        m5, _ = Movie.objects.get_or_create(
+            title="Supergirl",
+            defaults={
+                "category": "IMAX 3D",
+                "actors": "Milly Alcock, Matthias Schoenaerts, Eve Ridley",
+                "genre": "Sci-Fi / Adventure / Action",
+                "release_date": date(2026, 6, 26),
+                "language": "English",
+                "duration_minutes": 148,
+                "poster_url": "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=800&auto=format&fit=crop",
+                "backdrop_url": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1600&auto=format&fit=crop",
+                "status": Movie.StatusChoice.NOW_SHOWING,
+            },
+        )
+
         # 5. Shows (Wireframe Page 6: 12:50 pm, 3:00 pm, 6:00 pm)
         today = date.today()
         Show.objects.get_or_create(
@@ -119,6 +149,22 @@ class Command(BaseCommand):
             start_time=time(12, 0),
             defaults={"price": 400.00},
         )
+
+        for movie_item in [m2, m4, m5]:
+            Show.objects.get_or_create(
+                movie=movie_item,
+                hall=h1,
+                show_date=today,
+                start_time=time(14, 0),
+                defaults={"price": 550.00},
+            )
+            Show.objects.get_or_create(
+                movie=movie_item,
+                hall=h1,
+                show_date=today,
+                start_time=time(19, 30),
+                defaults={"price": 600.00},
+            )
 
         self.stdout.write(self.style.SUCCESS("Database seeded successfully with wireframe data!"))
 
