@@ -93,3 +93,67 @@
   border: 2.5px solid #D4AF37 !important;
   box-shadow: 8px 8px 0px #856C2B, 8px 8px 0px 2.5px #1E232E !important;
 }
+
+/* =========================================================================
+   PAGE 4 WIREFRAME POSTER BUTTON & SCROLL ANIMATIONS
+   ========================================================================= */
+
+/* Dark Bronze "GET TICKETS" button floating on poster (Wireframe Page 4) */
+.page4-ticket-btn {
+  background: rgba(45, 30, 20, 0.88);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.page4-ticket-btn:hover {
+  background: rgba(65, 45, 28, 0.95);
+  border-color: #D4AF37;
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+  transform: translateY(-2px);
+}
+
+/* Scroll reveal animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(45px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDownHeader {
+  from {
+    opacity: 0;
+    transform: translateY(-25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes subtleFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-slide-down-header {
+  animation: slideDownHeader 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-subtle-float {
+  animation: subtleFloat 2.5s ease-in-out infinite;
+}

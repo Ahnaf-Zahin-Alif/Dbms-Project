@@ -119,6 +119,21 @@ class Command(BaseCommand):
             },
         )
 
+        m6, _ = Movie.objects.get_or_create(
+            title="Moana 2",
+            defaults={
+                "category": "3D",
+                "actors": "Auli'i Cravalho, Dwayne Johnson, Alan Tudyk",
+                "genre": "Animation / Adventure / Family",
+                "release_date": date(2026, 11, 27),
+                "language": "English",
+                "duration_minutes": 100,
+                "poster_url": "/images/poster2-moana.png",
+                "backdrop_url": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1600&auto=format&fit=crop",
+                "status": Movie.StatusChoice.NOW_SHOWING,
+            },
+        )
+
         # 5. Shows (Wireframe Page 6: 12:50 pm, 3:00 pm, 6:00 pm)
         today = date.today()
         Show.objects.get_or_create(

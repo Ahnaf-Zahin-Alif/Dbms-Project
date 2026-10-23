@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import api from "../api";
 import HeroCarousel from "../components/HeroCarousel";
 import NavModals from "../components/NavModals";
 import { useTheatre } from "../context/TheatreContext";
-import { Clock, MapPin } from "lucide-react";
+import { MapPin, ChevronDown } from "lucide-react";
 
 export default function Homepage() {
   const [movies, setMovies] = useState([]);
@@ -12,7 +12,9 @@ export default function Homepage() {
   const [loading, setLoading] = useState(true);
   const [modalType, setModalType] = useState(null); // 'TICKET_PRICE', 'ABOUT_US', 'CONTACT'
   const [sidebarOpen, setSidebarOpen] = useState(true); // desktop default open
+  const [isCatalogVisible, setIsCatalogVisible] = useState(false);
 
+  const catalogRef = useRef(null);
   const [searchParams] = useSearchParams();
   const searchFilter = searchParams.get("search") || "";
   const { selectedTheatre, openTheatreModal } = useTheatre();
@@ -25,6 +27,30 @@ export default function Homepage() {
     "SHOW TIME",
     "VIEW ALL",
   ];
+
+  // Scroll Reveal Observer: Triggers animation when user scrolls to Page 4 section
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsCatalogVisible(true);
+        }
+      },
+      {
+        threshold: 0.08,
+        rootMargin: "0px 0px -40px 0px",
+      }
+    );
+
+    const currentElem = catalogRef.current;
+    if (currentElem) {
+      observer.observe(currentElem);
+    }
+
+    return () => {
+      if (currentElem) observer.unobserve(currentElem);
+    };
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -56,18 +82,39 @@ export default function Homepage() {
     };
   }, [activeTab]);
 
-  // Fallback movies including Clayface and Supergirl if API is loading or offline
+  // Fallback movies matching Wireframe Page 4 sequence
   const fallbackMovies = [
+    {
+      id: 3,
+      title: "Minions & Monsters",
+      category: "3D",
+      poster_url: "/images/poster1-minions.png",
+      status: "NOW_SHOWING",
+      duration_minutes: 105,
+    },
+    {
+      id: 6,
+      title: "Moana 2",
+      category: "3D",
+      poster_url: "/images/poster2-moana.png",
+      status: "NOW_SHOWING",
+      duration_minutes: 100,
+    },
+    {
+      id: 1,
+      title: "Spider-Man: Brand New Day",
+      category: "2D",
+      poster_url: "/images/poster3-spiderman.png",
+      status: "NOW_SHOWING",
+      duration_minutes: 180,
+    },
     {
       id: 2,
       title: "The Odyssey",
       category: "IMAX",
-      poster_url:
-        "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=800&auto=format&fit=crop",
-      backdrop_url: "/images/the-odyssey-card.png",
+      poster_url: "/images/poster4-odyssey.png",
       status: "NOW_SHOWING",
       duration_minutes: 165,
-      genre: "Epic / Adventure / Drama",
     },
     {
       id: 4,
@@ -75,11 +122,8 @@ export default function Homepage() {
       category: "IMAX",
       poster_url:
         "https://images.unsplash.com/photo-1509281373149-e957c6296406?q=80&w=800&auto=format&fit=crop",
-      backdrop_url:
-        "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1600&auto=format&fit=crop",
       status: "NOW_SHOWING",
       duration_minutes: 135,
-      genre: "Horror / Action / Mystery",
     },
     {
       id: 5,
@@ -87,35 +131,8 @@ export default function Homepage() {
       category: "IMAX 3D",
       poster_url:
         "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=800&auto=format&fit=crop",
-      backdrop_url:
-        "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1600&auto=format&fit=crop",
       status: "NOW_SHOWING",
       duration_minutes: 148,
-      genre: "Sci-Fi / Adventure / Action",
-    },
-    {
-      id: 1,
-      title: "Spider-Man: Brand New Day (2D)",
-      category: "2D",
-      poster_url:
-        "https://images.unsplash.com/photo-1635805737707-575885ab0820?q=80&w=800&auto=format&fit=crop",
-      backdrop_url:
-        "https://images.unsplash.com/photo-1635805737707-575885ab0820?q=80&w=1600&auto=format&fit=crop",
-      status: "NOW_SHOWING",
-      duration_minutes: 180,
-      genre: "Action / Adventure / Sci-Fi",
-    },
-    {
-      id: 3,
-      title: "Minions & Monsters",
-      category: "3D",
-      poster_url:
-        "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?q=80&w=800&auto=format&fit=crop",
-      backdrop_url:
-        "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?q=80&w=1600&auto=format&fit=crop",
-      status: "NOW_SHOWING",
-      duration_minutes: 105,
-      genre: "Animation / Comedy / Family",
     },
   ];
 
@@ -128,190 +145,245 @@ export default function Homepage() {
     return `${t.name}${t.location ? ` , ${t.location.replace(/, Dhaka/g, "")}` : ""}`;
   };
 
+  // Sort list to match Page 4 wireframe sequence: Minions -> Moana -> Spider-Man -> The Odyssey -> others
   const rawList = movies.length > 0 ? movies : fallbackMovies;
-  const displayMovies = rawList.filter((m) =>
+  const sortedList = [...rawList].sort((a, b) => {
+    const order = ["minion", "moana", "spider", "odyssey", "clayface", "supergirl"];
+    const aIdx = order.findIndex((k) => a.title.toLowerCase().includes(k));
+    const bIdx = order.findIndex((k) => b.title.toLowerCase().includes(k));
+    if (aIdx !== -1 && bIdx !== -1) return aIdx - bIdx;
+    if (aIdx !== -1) return -1;
+    if (bIdx !== -1) return 1;
+    return 0;
+  });
+
+  const displayMovies = sortedList.filter((m) =>
     searchFilter ? m.title.toLowerCase().includes(searchFilter.toLowerCase()) : true
   );
+
+  const scrollToCatalog = () => {
+    catalogRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   return (
     <div className="bg-gradient-to-b from-[#070A1E] via-[#090D24] to-[#050714] text-white min-h-screen">
       {/* Modals for Sidebar items (Ticket Price, About Us, Contact) */}
       <NavModals modalType={modalType} onClose={() => setModalType(null)} />
 
-      {/* TOP HERO CONTAINER (Wireframe Page 2) */}
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 pt-4 pb-12">
-        {/* Sub-header Bar: Location Pill on the Right */}
-        <div className="flex justify-end items-center mb-3">
-          <button
-            onClick={openTheatreModal}
-            className="group flex items-center gap-2 bg-white hover:bg-gray-100 rounded-full px-4 py-1.5 shadow-md hover:ring-2 hover:ring-[#D4AF37] transition text-xs sm:text-sm font-semibold text-gray-800 border border-gray-200 cursor-pointer"
-            title="Choose Theatre Location"
-          >
-            <MapPin className="w-4 h-4 text-red-600 fill-red-500 shrink-0 transition-transform group-hover:scale-110" />
-            <span className="truncate max-w-[180px] sm:max-w-[260px]">
-              {selectedTheatre ? formatTheatreLabel(selectedTheatre) : "Bashundhara Shopping Mall , Panthapath"}
-            </span>
-          </button>
-        </div>
+      {/* =========================================================================
+          SECTION 1: HERO CONTAINER (Wireframe Page 2)
+          ========================================================================= */}
+      <section className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 pt-4 pb-8 min-h-[90vh] flex flex-col justify-between">
+        <div>
+          {/* Sub-header Bar: Location Pill on the Right */}
+          <div className="flex justify-end items-center mb-3">
+            <button
+              onClick={openTheatreModal}
+              className="group flex items-center gap-2 bg-white hover:bg-gray-100 rounded-full px-4 py-1.5 shadow-md hover:ring-2 hover:ring-[#D4AF37] transition text-xs sm:text-sm font-semibold text-gray-800 border border-gray-200 cursor-pointer"
+              title="Choose Theatre Location"
+            >
+              <MapPin className="w-4 h-4 text-red-600 fill-red-500 shrink-0 transition-transform group-hover:scale-110" />
+              <span className="truncate max-w-[180px] sm:max-w-[260px]">
+                {selectedTheatre ? formatTheatreLabel(selectedTheatre) : "Bashundhara Shopping Mall , Panthapath"}
+              </span>
+            </button>
+          </div>
 
-        {/* Main Page 2 Layout: Sidebar on Left + Carousel on Right */}
-        <div className="flex flex-col md:flex-row items-start gap-4 lg:gap-6">
-          {/* LEFT SIDEBAR (Wireframe Page 2 exact menu) */}
-          <div className="w-full md:w-[180px] lg:w-[200px] shrink-0">
-            {/* Hamburger Button */}
-            <div className="mb-4 flex items-center">
-              <button
-                onClick={() => setSidebarOpen((prev) => !prev)}
-                className="w-10 h-8 rounded-sm border-2 border-[#C8A05C] bg-[#12162A] flex flex-col justify-center items-center gap-[4px] px-1 hover:border-[#F3E5AB] transition shadow-md cursor-pointer"
-                aria-label="Toggle Sidebar Menu"
-                title="Toggle Menu"
-              >
-                <span className="w-6 h-[2.5px] bg-[#D4A347] rounded-full" />
-                <span className="w-6 h-[2.5px] bg-[#D4A347] rounded-full" />
-                <span className="w-6 h-[2.5px] bg-[#D4A347] rounded-full" />
-              </button>
+          {/* Main Page 2 Layout: Sidebar on Left + Carousel on Right */}
+          <div className="flex flex-col md:flex-row items-start gap-4 lg:gap-6">
+            {/* LEFT SIDEBAR (Wireframe Page 2 exact menu) */}
+            <div className="w-full md:w-[180px] lg:w-[200px] shrink-0">
+              {/* Hamburger Button */}
+              <div className="mb-4 flex items-center">
+                <button
+                  onClick={() => setSidebarOpen((prev) => !prev)}
+                  className="w-10 h-8 rounded-sm border-2 border-[#C8A05C] bg-[#12162A] flex flex-col justify-center items-center gap-[4px] px-1 hover:border-[#F3E5AB] transition shadow-md cursor-pointer"
+                  aria-label="Toggle Sidebar Menu"
+                  title="Toggle Menu"
+                >
+                  <span className="w-6 h-[2.5px] bg-[#D4A347] rounded-full" />
+                  <span className="w-6 h-[2.5px] bg-[#D4A347] rounded-full" />
+                  <span className="w-6 h-[2.5px] bg-[#D4A347] rounded-full" />
+                </button>
+              </div>
+
+              {/* Menu Buttons Stack with Vertical Gold Line */}
+              {sidebarOpen && (
+                <div className="relative">
+                  {/* The vertical bright gold line running down the right edge */}
+                  <div className="hidden md:block absolute right-0 -top-3 -bottom-3 w-[2.5px] gold-accent-line rounded-full z-10" />
+
+                  {/* 4 Stacked Bronze Buttons */}
+                  <div className="flex flex-col divide-y divide-[#221B13] border-y border-[#3A2F20] shadow-xl rounded-l-xs overflow-hidden">
+                    {/* 1. HOME */}
+                    <button
+                      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                      className="bronze-nav-btn w-full py-2.5 px-3 text-center cursor-pointer group"
+                    >
+                      <span className="font-cinzel text-xs font-bold text-[#E5C158] group-hover:text-white tracking-[0.18em] uppercase transition">
+                        HOME
+                      </span>
+                    </button>
+
+                    {/* 2. TICKET PRICE */}
+                    <button
+                      onClick={() => setModalType("TICKET_PRICE")}
+                      className="bronze-nav-btn w-full py-2.5 px-3 text-center cursor-pointer group"
+                    >
+                      <span className="font-cinzel text-xs font-bold text-[#E5C158] group-hover:text-white tracking-[0.18em] uppercase transition">
+                        TICKET PRICE
+                      </span>
+                    </button>
+
+                    {/* 3. ABOUT US */}
+                    <button
+                      onClick={() => setModalType("ABOUT_US")}
+                      className="bronze-nav-btn w-full py-2.5 px-3 text-center cursor-pointer group"
+                    >
+                      <span className="font-cinzel text-xs font-bold text-[#E5C158] group-hover:text-white tracking-[0.18em] uppercase transition">
+                        ABOUT US
+                      </span>
+                    </button>
+
+                    {/* 4. CONTACT */}
+                    <button
+                      onClick={() => setModalType("CONTACT")}
+                      className="bronze-nav-btn w-full py-2.5 px-3 text-center cursor-pointer group"
+                    >
+                      <span className="font-cinzel text-xs font-bold text-[#E5C158] group-hover:text-white tracking-[0.18em] uppercase transition">
+                        CONTACT
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* Menu Buttons Stack with Vertical Gold Line */}
-            {sidebarOpen && (
-              <div className="relative">
-                {/* The vertical bright gold line running down the right edge */}
-                <div className="hidden md:block absolute right-0 -top-3 -bottom-3 w-[2.5px] gold-accent-line rounded-full z-10" />
+            {/* RIGHT COLUMN: HERO CAROUSEL CARD */}
+            <div className="w-full md:flex-1 min-w-0">
+              <HeroCarousel movies={displayMovies} />
+            </div>
+          </div>
+        </div>
 
-                {/* 4 Stacked Bronze Buttons */}
-                <div className="flex flex-col divide-y divide-[#221B13] border-y border-[#3A2F20] shadow-xl rounded-l-xs overflow-hidden">
-                  {/* 1. HOME */}
-                  <button
-                    onClick={() => {
-                      window.scrollTo({ top: 0, behavior: "smooth" });
-                    }}
-                    className="bronze-nav-btn w-full py-2.5 px-3 text-center cursor-pointer group"
-                  >
-                    <span className="font-cinzel text-xs font-bold text-[#E5C158] group-hover:text-white tracking-[0.18em] uppercase transition">
-                      HOME
-                    </span>
-                  </button>
+        {/* Scroll Indicator Prompt to Guide User Down */}
+        <div className="flex justify-center mt-8 mb-2">
+          <button
+            onClick={scrollToCatalog}
+            className="group flex items-center gap-2.5 bg-[#141A33]/90 hover:bg-[#1E254A] border border-[#D4AF37]/40 hover:border-[#D4AF37] text-[#D4AF37] px-6 py-2.5 rounded-full text-xs font-cinzel font-bold tracking-[0.22em] uppercase transition-all shadow-[0_4px_20px_rgba(0,0,0,0.5)] hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] cursor-pointer animate-subtle-float"
+          >
+            <span>SCROLL TO EXPLORE MOVIES</span>
+            <ChevronDown className="w-4 h-4 transition-transform group-hover:translate-y-1 stroke-[2.5]" />
+          </button>
+        </div>
+      </section>
 
-                  {/* 2. TICKET PRICE */}
-                  <button
-                    onClick={() => setModalType("TICKET_PRICE")}
-                    className="bronze-nav-btn w-full py-2.5 px-3 text-center cursor-pointer group"
-                  >
-                    <span className="font-cinzel text-xs font-bold text-[#E5C158] group-hover:text-white tracking-[0.18em] uppercase transition">
-                      TICKET PRICE
-                    </span>
-                  </button>
+      {/* =========================================================================
+          SECTION 2: CATALOG SECTION (Wireframe Page 4 - Revealed upon scroll)
+          ========================================================================= */}
+      <section
+        ref={catalogRef}
+        id="catalog-section"
+        className="w-full transition-opacity duration-700 min-h-screen border-t border-[#D4AF37]/20"
+      >
+        {/* Full-width Page 4 Dark Wine Header Bar with Tabs */}
+        <div
+          className={`w-full bg-[#1D121F] border-b border-[#2C1D2E] px-4 sm:px-8 py-3 transition-all duration-700 ${
+            isCatalogVisible ? "animate-slide-down-header" : "opacity-0"
+          }`}
+        >
+          <div className="max-w-[1400px] mx-auto flex items-center justify-between gap-4 overflow-x-auto scrollbar-none">
+            <div className="flex items-center gap-6 sm:gap-10 md:gap-14 mx-auto">
+              {tabs.map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`text-xs sm:text-sm md:text-base tracking-[0.2em] font-cinzel uppercase transition-all py-1.5 whitespace-nowrap cursor-pointer ${
+                    activeTab === tab
+                      ? "text-[#D4AF37] font-bold border-b-2 border-[#D4AF37] drop-shadow-[0_2px_10px_rgba(212,175,55,0.6)]"
+                      : "text-gray-400 hover:text-gray-200"
+                  }`}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
 
-                  {/* 3. ABOUT US */}
-                  <button
-                    onClick={() => setModalType("ABOUT_US")}
-                    className="bronze-nav-btn w-full py-2.5 px-3 text-center cursor-pointer group"
-                  >
-                    <span className="font-cinzel text-xs font-bold text-[#E5C158] group-hover:text-white tracking-[0.18em] uppercase transition">
-                      ABOUT US
-                    </span>
-                  </button>
-
-                  {/* 4. CONTACT */}
-                  <button
-                    onClick={() => setModalType("CONTACT")}
-                    className="bronze-nav-btn w-full py-2.5 px-3 text-center cursor-pointer group"
-                  >
-                    <span className="font-cinzel text-xs font-bold text-[#E5C158] group-hover:text-white tracking-[0.18em] uppercase transition">
-                      CONTACT
-                    </span>
-                  </button>
-                </div>
-              </div>
+            {searchFilter && (
+              <span className="text-xs text-[#D4AF37] shrink-0 font-medium bg-[#140C15] px-3 py-1 rounded-full border border-[#D4AF37]/40">
+                Filter: "{searchFilter}"
+              </span>
             )}
           </div>
+        </div>
 
-          {/* RIGHT COLUMN: HERO CAROUSEL CARD */}
-          <div className="w-full md:flex-1 min-w-0">
-            <HeroCarousel movies={displayMovies} />
+        {/* Sub-bar below tabs: Left Hamburger Icon matching Page 4 */}
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 pt-6 pb-2">
+          <div className="flex items-center justify-between">
+            <button
+              onClick={() => {
+                setSidebarOpen(true);
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+              className="w-10 h-8 rounded-sm border-2 border-[#C8A05C] bg-[#12162A] flex flex-col justify-center items-center gap-[4px] px-1 hover:border-[#F3E5AB] transition shadow-md cursor-pointer"
+              title="Return to Menu"
+              aria-label="Return to Menu"
+            >
+              <span className="w-6 h-[2.5px] bg-[#D4A347] rounded-full" />
+              <span className="w-6 h-[2.5px] bg-[#D4A347] rounded-full" />
+              <span className="w-6 h-[2.5px] bg-[#D4A347] rounded-full" />
+            </button>
           </div>
         </div>
-      </div>
 
-      {/* CATALOG SECTION (Wireframe Page 4) */}
-      <section id="catalog-section" className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 py-10 border-t border-[#D4AF37]/20">
-        {/* Navigation Tabs Bar */}
-        <div className="flex items-center justify-between border-b border-[#D4AF37]/30 pb-4 overflow-x-auto gap-4 scrollbar-none">
-          <div className="flex items-center gap-6 sm:gap-10">
-            {tabs.map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`text-xs sm:text-sm tracking-[0.2em] font-cinzel uppercase transition-all pb-2 whitespace-nowrap cursor-pointer ${
-                  activeTab === tab
-                    ? "text-[#D4AF37] font-bold border-b-2 border-[#D4AF37] drop-shadow-[0_2px_10px_rgba(212,175,55,0.5)]"
-                    : "text-gray-400 hover:text-gray-200"
-                }`}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
+        {/* Page 4 Movie Posters Grid (4 columns exactly matching Wireframe Page 4) */}
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 pb-16">
+          {loading ? (
+            <div className="flex justify-center items-center py-28">
+              <div className="w-12 h-12 border-4 border-[#D4AF37] border-t-transparent rounded-full animate-spin" />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mt-6">
+              {displayMovies.map((movie, idx) => (
+                <div
+                  key={movie.id}
+                  className={`group relative rounded-lg overflow-hidden bg-black/60 shadow-2xl transition-all duration-500 hover:shadow-[0_0_25px_rgba(212,175,55,0.35)] border border-blue-950/40 hover:border-[#D4AF37]/60 ${
+                    isCatalogVisible ? "animate-fade-in-up" : "opacity-0"
+                  }`}
+                  style={{
+                    animationDelay: `${idx * 130}ms`,
+                  }}
+                >
+                  {/* Poster Image (Takes full card body) */}
+                  <div className="relative aspect-[2/3] overflow-hidden bg-black select-none">
+                    <img
+                      src={
+                        movie.poster_url ||
+                        "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=600&auto=format&fit=crop"
+                      }
+                      alt={movie.title}
+                      className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    />
 
-          {searchFilter && (
-            <span className="text-xs text-[#D4AF37] shrink-0 font-medium bg-[#1D121F] px-3 py-1 rounded-full border border-[#D4AF37]/40">
-              Filter: "{searchFilter}"
-            </span>
+                    {/* Subtle vignette shadow overlay at bottom of poster */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
+
+                    {/* Dark Bronze Floating "GET TICKETS" Button (Wireframe Page 4) */}
+                    <Link
+                      to={`/movie/${movie.id}`}
+                      className="page4-ticket-btn absolute bottom-3.5 left-3.5 z-20 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xs flex items-center justify-center cursor-pointer group/btn"
+                      title={`Get tickets for ${movie.title}`}
+                    >
+                      <span className="font-cinzel text-[11px] sm:text-xs font-bold text-[#E5C158] group-hover/btn:text-white tracking-[0.18em] uppercase transition-colors">
+                        GET TICKETS
+                      </span>
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </div>
-
-        {/* Movie Poster Grid (Wireframe Page 4) */}
-        {loading ? (
-          <div className="flex justify-center items-center py-24">
-            <div className="w-10 h-10 border-4 border-[#D4AF37] border-t-transparent rounded-full animate-spin" />
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5 sm:gap-6 md:gap-7 mt-10">
-            {displayMovies.map((movie) => (
-              <div
-                key={movie.id}
-                className="group relative flex flex-col rounded-xl overflow-hidden bg-[#0F1428] border border-[#D4AF37]/25 hover:border-[#D4AF37] transition-all duration-300 shadow-xl hover:shadow-[0_0_20px_rgba(212,175,55,0.2)]"
-              >
-                {/* Poster Image */}
-                <div className="relative aspect-[2/3] overflow-hidden bg-black/70">
-                  <img
-                    src={
-                      movie.poster_url ||
-                      "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=600&auto=format&fit=crop"
-                    }
-                    alt={movie.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  {movie.category && (
-                    <span className="absolute top-2 right-2 bg-black/85 backdrop-blur-xs text-[#D4AF37] border border-[#D4AF37]/50 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider shadow">
-                      {movie.category}
-                    </span>
-                  )}
-                </div>
-
-                {/* Title & Get Tickets Button */}
-                <div className="p-4 flex flex-col justify-between flex-grow">
-                  <div>
-                    <h3 className="font-cinzel font-bold text-sm sm:text-base text-gray-100 group-hover:text-[#D4AF37] transition line-clamp-1">
-                      {movie.title}
-                    </h3>
-                    <p className="text-xs text-gray-400 mt-1.5 flex items-center gap-1.5">
-                      <Clock className="w-3.5 h-3.5 text-[#D4AF37]" />
-                      {movie.duration_minutes ? `${movie.duration_minutes} mins` : "Now Showing"}
-                    </p>
-                  </div>
-
-                  <Link
-                    to={`/movie/${movie.id}`}
-                    className="mt-4 block w-full text-center bg-[#D4AF37] hover:bg-[#F3E5AB] text-gray-950 font-bold text-xs tracking-wider uppercase py-2.5 rounded-lg shadow-md hover:shadow-lg transition-all"
-                  >
-                    GET TICKETS
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
       </section>
     </div>
   );
