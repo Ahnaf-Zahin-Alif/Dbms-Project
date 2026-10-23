@@ -166,33 +166,33 @@ export default function Homepage() {
   };
 
   return (
-    <div className="bg-gradient-to-b from-[#070A1E] via-[#090D24] to-[#050714] text-white min-h-screen">
+    <div className="bg-gradient-to-b from-[#070A1E] via-[#090D24] to-[#050714] text-white min-h-screen w-full overflow-x-hidden">
       {/* Modals for Sidebar items (Ticket Price, About Us, Contact) */}
       <NavModals modalType={modalType} onClose={() => setModalType(null)} />
 
       {/* =========================================================================
-          SECTION 1: HERO CONTAINER (Wireframe Page 2)
+          SECTION 1: HERO CONTAINER (Wireframe Page 2 - Stretched Widescreen)
           ========================================================================= */}
-      <section className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 pt-4 pb-8 min-h-[90vh] flex flex-col justify-between">
+      <section className="w-full px-3 sm:px-6 lg:px-10 pt-2 pb-6 min-h-[85vh] lg:min-h-[88vh] flex flex-col justify-between">
         <div>
           {/* Sub-header Bar: Location Pill on the Right */}
-          <div className="flex justify-end items-center mb-3">
+          <div className="w-full flex justify-end items-center mb-2.5">
             <button
               onClick={openTheatreModal}
               className="group flex items-center gap-2 bg-white hover:bg-gray-100 rounded-full px-4 py-1.5 shadow-md hover:ring-2 hover:ring-[#D4AF37] transition text-xs sm:text-sm font-semibold text-gray-800 border border-gray-200 cursor-pointer"
               title="Choose Theatre Location"
             >
               <MapPin className="w-4 h-4 text-red-600 fill-red-500 shrink-0 transition-transform group-hover:scale-110" />
-              <span className="truncate max-w-[180px] sm:max-w-[260px]">
+              <span className="truncate max-w-[200px] sm:max-w-[320px]">
                 {selectedTheatre ? formatTheatreLabel(selectedTheatre) : "Bashundhara Shopping Mall , Panthapath"}
               </span>
             </button>
           </div>
 
-          {/* Main Page 2 Layout: Sidebar on Left + Carousel on Right */}
-          <div className="flex flex-col md:flex-row items-start gap-4 lg:gap-6">
+          {/* Main Page 2 Layout: Sidebar on Left + Carousel on Right (Widescreen Stretch) */}
+          <div className="flex flex-col md:flex-row items-stretch gap-4 lg:gap-6 w-full">
             {/* LEFT SIDEBAR (Wireframe Page 2 exact menu) */}
-            <div className="w-full md:w-[180px] lg:w-[200px] shrink-0">
+            <div className="w-full md:w-[170px] lg:w-[190px] shrink-0 flex flex-col">
               {/* Hamburger Button */}
               <div className="mb-4 flex items-center">
                 <button
@@ -259,18 +259,18 @@ export default function Homepage() {
               )}
             </div>
 
-            {/* RIGHT COLUMN: HERO CAROUSEL CARD */}
-            <div className="w-full md:flex-1 min-w-0">
+            {/* RIGHT COLUMN: HERO CAROUSEL CARD (Widescreen Stretch) */}
+            <div className="w-full md:flex-1 min-w-0 flex-grow">
               <HeroCarousel movies={displayMovies} />
             </div>
           </div>
         </div>
 
         {/* Scroll Indicator Prompt to Guide User Down */}
-        <div className="flex justify-center mt-8 mb-2">
+        <div className="flex justify-center mt-6 mb-1">
           <button
             onClick={scrollToCatalog}
-            className="group flex items-center gap-2.5 bg-[#141A33]/90 hover:bg-[#1E254A] border border-[#D4AF37]/40 hover:border-[#D4AF37] text-[#D4AF37] px-6 py-2.5 rounded-full text-xs font-cinzel font-bold tracking-[0.22em] uppercase transition-all shadow-[0_4px_20px_rgba(0,0,0,0.5)] hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] cursor-pointer animate-subtle-float"
+            className="group flex items-center gap-2.5 bg-[#141A33]/90 hover:bg-[#1E254A] border border-[#D4AF37]/40 hover:border-[#D4AF37] text-[#D4AF37] px-6 py-2 rounded-full text-xs font-cinzel font-bold tracking-[0.22em] uppercase transition-all shadow-[0_4px_20px_rgba(0,0,0,0.5)] hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] cursor-pointer animate-subtle-float"
           >
             <span>SCROLL TO EXPLORE MOVIES</span>
             <ChevronDown className="w-4 h-4 transition-transform group-hover:translate-y-1 stroke-[2.5]" />
@@ -279,7 +279,7 @@ export default function Homepage() {
       </section>
 
       {/* =========================================================================
-          SECTION 2: CATALOG SECTION (Wireframe Page 4 - Revealed upon scroll)
+          SECTION 2: CATALOG SECTION (Wireframe Page 4 - Stretched Widescreen)
           ========================================================================= */}
       <section
         ref={catalogRef}
@@ -288,12 +288,12 @@ export default function Homepage() {
       >
         {/* Full-width Page 4 Dark Wine Header Bar with Tabs */}
         <div
-          className={`w-full bg-[#1D121F] border-b border-[#2C1D2E] px-4 sm:px-8 py-3 transition-all duration-700 ${
+          className={`w-full bg-[#1D121F] border-b border-[#2C1D2E] px-4 sm:px-8 py-3.5 transition-all duration-700 ${
             isCatalogVisible ? "animate-slide-down-header" : "opacity-0"
           }`}
         >
-          <div className="max-w-[1400px] mx-auto flex items-center justify-between gap-4 overflow-x-auto scrollbar-none">
-            <div className="flex items-center gap-6 sm:gap-10 md:gap-14 mx-auto">
+          <div className="w-full flex items-center justify-between gap-4 overflow-x-auto scrollbar-none">
+            <div className="flex items-center gap-6 sm:gap-10 md:gap-16 mx-auto">
               {tabs.map((tab) => (
                 <button
                   key={tab}
@@ -318,7 +318,7 @@ export default function Homepage() {
         </div>
 
         {/* Sub-bar below tabs: Left Hamburger Icon matching Page 4 */}
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 pt-6 pb-2">
+        <div className="w-full px-3 sm:px-6 lg:px-10 pt-5 pb-2">
           <div className="flex items-center justify-between">
             <button
               onClick={() => {
@@ -336,14 +336,14 @@ export default function Homepage() {
           </div>
         </div>
 
-        {/* Page 4 Movie Posters Grid (4 columns exactly matching Wireframe Page 4) */}
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 pb-16">
+        {/* Page 4 Movie Posters Grid (Stretched Widescreen Grid) */}
+        <div className="w-full px-3 sm:px-6 lg:px-10 pb-16">
           {loading ? (
             <div className="flex justify-center items-center py-28">
               <div className="w-12 h-12 border-4 border-[#D4AF37] border-t-transparent rounded-full animate-spin" />
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mt-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 mt-5">
               {displayMovies.map((movie, idx) => (
                 <div
                   key={movie.id}

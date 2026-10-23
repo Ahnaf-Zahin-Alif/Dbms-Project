@@ -18,6 +18,7 @@ export default function HeroCarousel({ movies = [] }) {
       backdrop: "/images/the-odyssey-card.png",
       titleColor: "odyssey-title",
       movieId: movies.find((m) => m.title.toLowerCase().includes("odyssey"))?.id || 2,
+      hasBurnedInText: true, // Prevents duplicate text over the original wireframe graphic
     },
     {
       id: "clayface",
@@ -34,6 +35,7 @@ export default function HeroCarousel({ movies = [] }) {
         "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1600&auto=format&fit=crop",
       titleColor: "gold-glitter-text",
       movieId: movies.find((m) => m.title.toLowerCase().includes("clayface"))?.id || 4,
+      hasBurnedInText: false,
     },
     {
       id: "supergirl",
@@ -50,6 +52,7 @@ export default function HeroCarousel({ movies = [] }) {
         "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1600&auto=format&fit=crop",
       titleColor: "text-amber-200",
       movieId: movies.find((m) => m.title.toLowerCase().includes("supergirl"))?.id || 5,
+      hasBurnedInText: false,
     },
     {
       id: "spiderman",
@@ -66,6 +69,7 @@ export default function HeroCarousel({ movies = [] }) {
         "https://images.unsplash.com/photo-1635805737707-575885ab0820?q=80&w=1600&auto=format&fit=crop",
       titleColor: "text-red-500",
       movieId: movies.find((m) => m.title.toLowerCase().includes("spider"))?.id || 1,
+      hasBurnedInText: false,
     },
   ];
 
@@ -85,8 +89,8 @@ export default function HeroCarousel({ movies = [] }) {
   const totalIndicators = 11;
 
   return (
-    <div className="relative w-full h-[360px] sm:h-[440px] md:h-[500px] lg:h-[520px] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border border-blue-900/30 group bg-black select-none">
-      {/* Background Backdrop */}
+    <div className="relative w-full h-[62vh] sm:h-[70vh] md:h-[76vh] lg:h-[80vh] min-h-[460px] max-h-[820px] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border border-blue-900/40 group bg-black select-none">
+      {/* Background Backdrop with Cover and Center alignment */}
       <div
         className="absolute inset-0 bg-cover bg-center transition-all duration-1000 ease-out transform group-hover:scale-105"
         style={{ backgroundImage: `url(${current.backdrop})` }}
@@ -96,35 +100,41 @@ export default function HeroCarousel({ movies = [] }) {
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-transparent to-black/50" />
       </div>
 
-      {/* Cinematic Typography Overlay (if not already burned into the card) */}
-      <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 md:px-8 max-w-3xl mx-auto">
-        {/* Director / Studio Line */}
-        <p className="text-[11px] sm:text-xs md:text-sm tracking-[0.3em] font-medium text-[#C89B48] uppercase drop-shadow-md mb-2">
-          {current.director}
-        </p>
+      {/* Cinematic Typography Overlay (shown if not already burned into the card) */}
+      <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 md:px-8 max-w-4xl mx-auto">
+        {!current.hasBurnedInText ? (
+          <>
+            {/* Director / Studio Line */}
+            <p className="text-[11px] sm:text-xs md:text-sm tracking-[0.3em] font-medium text-[#C89B48] uppercase drop-shadow-md mb-2">
+              {current.director}
+            </p>
 
-        {/* Hero Title */}
-        <h1
-          className={`text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-cinzel font-black tracking-[0.22em] my-1 drop-shadow-[0_4px_25px_rgba(0,0,0,0.9)] ${current.titleColor}`}
-        >
-          {current.title}
-        </h1>
+            {/* Hero Title */}
+            <h1
+              className={`text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-cinzel font-black tracking-[0.22em] my-1 drop-shadow-[0_4px_25px_rgba(0,0,0,0.9)] ${current.titleColor}`}
+            >
+              {current.title}
+            </h1>
 
-        {/* Date */}
-        <p className="text-xl sm:text-2xl md:text-3xl font-cinzel font-bold tracking-[0.25em] text-[#C86D49] my-2 drop-shadow-md">
-          {current.date}
-        </p>
+            {/* Date */}
+            <p className="text-xl sm:text-2xl md:text-3xl font-cinzel font-bold tracking-[0.25em] text-[#C86D49] my-2 drop-shadow-md">
+              {current.date}
+            </p>
 
-        {/* Tagline / Format */}
-        <p className="text-[10px] sm:text-xs md:text-sm tracking-[0.2em] text-[#E0D0B5] uppercase font-medium drop-shadow">
-          {current.tagline}
-        </p>
+            {/* Tagline / Format */}
+            <p className="text-[10px] sm:text-xs md:text-sm tracking-[0.2em] text-[#E0D0B5] uppercase font-medium drop-shadow">
+              {current.tagline}
+            </p>
+          </>
+        ) : null}
 
         {/* Quick Ticket Action */}
         {current.movieId && (
           <Link
             to={`/movie/${current.movieId}`}
-            className="mt-6 inline-flex items-center gap-2 bg-[#D4AF37] hover:bg-[#F3E5AB] text-gray-950 font-bold px-6 py-2 rounded-full text-xs tracking-widest uppercase transition-all shadow-[0_0_20px_rgba(212,175,55,0.4)] hover:scale-105"
+            className={`inline-flex items-center gap-2 bg-[#D4AF37] hover:bg-[#F3E5AB] text-gray-950 font-bold px-7 py-2.5 rounded-full text-xs tracking-widest uppercase transition-all shadow-[0_0_20px_rgba(212,175,55,0.4)] hover:scale-105 ${
+              current.hasBurnedInText ? "mt-40 sm:mt-48 md:mt-56" : "mt-6"
+            }`}
           >
             GET TICKETS
           </Link>
