@@ -128,3 +128,4 @@ export default function NavModals({ modalType, onClose }) {
     </div>
   );
 }
+

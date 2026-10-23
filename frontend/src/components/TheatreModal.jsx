@@ -1,61 +1,112 @@
+import { useEffect } from "react";
 import { useTheatre } from "../context/TheatreContext";
-import { MapPin, X } from "lucide-react";
+import { MapPin, X, Check } from "lucide-react";
 
 export default function TheatreModal() {
-  const { theatres, selectedTheatre, selectTheatre, isTheatreModalOpen, closeTheatreModal } =
-    useTheatre();
+  const {
+    theatres,
+    selectedTheatre,
+    selectTheatre,
+    isTheatreModalOpen,
+    closeTheatreModal,
+  } = useTheatre();
+
+  // Close on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        closeTheatreModal();
+      }
+    };
+    if (isTheatreModalOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isTheatreModalOpen, closeTheatreModal]);
 
   if (!isTheatreModalOpen) return null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-xs p-4">
-      {/* Page 3 Modal Container */}
-      <div className="relative w-full max-w-lg rounded-2xl bg-[#F8F9FA] p-8 text-gray-900 shadow-2xl border border-gray-200">
-        <button
-          onClick={closeTheatreModal}
-          className="absolute right-4 top-4 rounded-full p-2 text-gray-500 hover:bg-gray-200 transition"
-        >
-          <X className="w-5 h-5" />
-        </button>
+  // Fallback data matching Wireframe Page 3 exactly
+  const defaultTheatres = [
+    { id: 1, name: "Bashundhara Shopping Mall", location: "Panthapath" },
+    { id: 2, name: "Sony Square", location: "Mirpur" },
+    { id: 3, name: "Ball Arcade", location: "Chattagram" },
+    { id: 4, name: "Finlay Square", location: "Chattagram" },
+  ];
 
-        {/* Header Header Tab */}
-        <div className="mx-auto mb-8 w-fit rounded-xl border border-gray-300 bg-white px-8 py-3 text-center shadow-md">
-          <h2 className="text-xl font-bold tracking-wider text-gray-800 uppercase">
-            Select Your Theatre
+  const displayList = theatres.length > 0 ? theatres : defaultTheatres;
+
+  // Exact Wireframe Page 3 text formatting: "Bashundhara Shopping Mall , Panthapath"
+  const formatTheatreLabel = (t) => {
+    if (t.name.includes("Bashundhara")) return "Bashundhara Shopping Mall , Panthapath";
+    if (t.name.includes("Sony")) return "Sony Square , Mirpur";
+    if (t.name.includes("Ball")) return "Ball Arcade , Chattagram";
+    if (t.name.includes("Finlay")) return "Finlay Square , Chattagram";
+    return `${t.name}${t.location ? ` , ${t.location.replace(/, Dhaka/g, "")}` : ""}`;
+  };
+
+  return (
+    <div
+      onClick={closeTheatreModal}
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 bg-[#070A1E]/85 backdrop-blur-md animate-in fade-in duration-200 select-none overflow-y-auto"
+    >
+      {/* Dismiss Button in Top Right */}
+      <button
+        onClick={closeTheatreModal}
+        className="fixed top-5 right-5 sm:top-8 sm:right-8 w-11 h-11 rounded-full bg-[#1A2035]/80 border border-[#D4AF37]/40 text-gray-300 hover:text-white hover:border-[#D4AF37] flex items-center justify-center transition shadow-lg cursor-pointer z-50"
+        aria-label="Close theatre dropdown"
+        title="Close (Esc)"
+      >
+        <X className="w-6 h-6 stroke-[2]" />
+      </button>
+
+      {/* Main Dropdown Container (Wireframe Page 3) */}
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-[760px] flex flex-col items-center py-4"
+      >
+        {/* Title Box with 3D Offset Shadow (Wireframe Page 3) */}
+        <div className="theatre-title-box w-full max-w-[440px] py-4 px-6 sm:px-8 text-center mb-8 sm:mb-10 shadow-2xl">
+          <h2 className="font-cinzel font-black text-lg sm:text-xl md:text-2xl tracking-[0.2em] leading-snug">
+            <span className="text-[#281417]">SELECT </span>
+            <span className="text-[#344474]">YOUR </span>
+            <span className="text-[#281417]">THEATRE</span>
           </h2>
         </div>
 
-        {/* Theatre Options (Pill Buttons) */}
-        <div className="space-y-4">
-          {theatres.length === 0 ? (
-            <div className="text-center py-6 text-gray-500">
-              <p>No theatres found.</p>
-              <p className="text-xs text-gray-400 mt-1">
-                Add them via the Django Admin dashboard!
-              </p>
-            </div>
-          ) : (
-            theatres.map((t) => {
-              const isSelected = selectedTheatre?.id === t.id;
-              return (
-                <button
-                  key={t.id}
-                  onClick={() => selectTheatre(t)}
-                  className={`w-full flex items-center gap-4 rounded-full border px-6 py-4 text-left font-serif text-base transition ${
-                    isSelected
-                      ? "border-[#D4AF37] bg-[#FFF8E7] text-gray-900 shadow-md ring-2 ring-[#D4AF37]"
-                      : "border-gray-200 bg-white text-gray-800 hover:border-[#D4AF37] hover:shadow-md"
-                  }`}
-                >
-                  <MapPin className="h-6 w-6 shrink-0 fill-red-500 text-red-600" />
-                  <span className="font-semibold">{t.name}</span>
-                  {t.location && (
-                    <span className="text-gray-500 font-normal">, {t.location}</span>
-                  )}
-                </button>
-              );
-            })
-          )}
+        {/* 4 Theatre Options (Pill Buttons with 3D Offset Shadow) */}
+        <div className="flex flex-col gap-4 sm:gap-5 w-full">
+          {displayList.map((t) => {
+            const isSelected = selectedTheatre?.id === t.id;
+            return (
+              <button
+                key={t.id}
+                onClick={() => selectTheatre(t)}
+                className={`theatre-pill-btn flex items-center justify-between gap-4 px-6 sm:px-8 py-3.5 sm:py-4 text-left cursor-pointer ${
+                  isSelected ? "theatre-pill-selected ring-2 ring-[#D4AF37]" : ""
+                }`}
+                title={`Select ${formatTheatreLabel(t)}`}
+              >
+                <div className="flex items-center gap-4 sm:gap-5 min-w-0">
+                  {/* Red Map Pin Icon */}
+                  <MapPin className="w-6 sm:w-7 h-6 sm:h-7 text-[#CD3324] fill-[#CD3324] stroke-[1.5] shrink-0" />
+                  
+                  {/* Theatre Name and Location */}
+                  <span className="font-cinzel font-bold text-sm sm:text-base md:text-lg text-[#404953] tracking-wide truncate">
+                    {formatTheatreLabel(t)}
+                  </span>
+                </div>
+
+                {/* Selected Status Indicator */}
+                {isSelected && (
+                  <span className="flex items-center gap-1.5 shrink-0 bg-[#D4AF37] text-gray-950 text-[11px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow">
+                    <Check className="w-3.5 h-3.5 stroke-[3]" />
+                    Active
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>

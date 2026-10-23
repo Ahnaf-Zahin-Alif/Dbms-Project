@@ -54,3 +54,42 @@
   -webkit-text-fill-color: transparent;
   filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.9));
 }
+
+/* =========================================================================
+   THEATRE MODAL / DROPDOWN (Wireframe Page 3)
+   ========================================================================= */
+
+/* 3D Offset Shadow Title Box: soft light grey bg with dual border-shadow */
+.theatre-title-box {
+  background-color: #E6E2E3;
+  border: 2px solid #141416;
+  border-radius: 28px;
+  box-shadow: 12px 12px 0px #CBD0DC, 12px 12px 0px 2px #141416;
+}
+
+/* 3D Offset Shadow Pill: warm ivory cream bg with slate shadow and dark outline */
+.theatre-pill-btn {
+  background-color: #FAF5EE;
+  border: 2px solid #1E232E;
+  border-radius: 9999px;
+  box-shadow: 8px 8px 0px #4E5760, 8px 8px 0px 2px #1E232E;
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.15s ease;
+}
+
+.theatre-pill-btn:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 6px 6px 0px #4E5760, 6px 6px 0px 2px #1E232E;
+  background-color: #FFFFFF;
+}
+
+.theatre-pill-btn:active {
+  transform: translate(8px, 8px);
+  box-shadow: 0px 0px 0px #4E5760, 0px 0px 0px 2px #1E232E;
+}
+
+/* Selected state highlight for theatre pill */
+.theatre-pill-selected {
+  background-color: #FFFDF8 !important;
+  border: 2.5px solid #D4AF37 !important;
+  box-shadow: 8px 8px 0px #856C2B, 8px 8px 0px 2.5px #1E232E !important;
+}

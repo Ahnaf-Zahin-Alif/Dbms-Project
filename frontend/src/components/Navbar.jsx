@@ -1,12 +1,16 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { Search, User, LogOut } from "lucide-react";
+import { useTheatre } from "../context/TheatreContext";
+import { Search, User, LogOut, MapPin } from "lucide-react";
 
 export default function Navbar() {
   const { user, isAuthenticated, logout, openAuthModal } = useAuth();
+  const { selectedTheatre, openTheatreModal } = useTheatre();
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
+  const isHomepage = location.pathname === "/";
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -15,6 +19,15 @@ export default function Navbar() {
     } else {
       navigate("/");
     }
+  };
+
+  const formatTheatreLabel = (t) => {
+    if (!t) return "Bashundhara Shopping Mall";
+    if (t.name.includes("Bashundhara")) return "Bashundhara Mall";
+    if (t.name.includes("Sony")) return "Sony Square";
+    if (t.name.includes("Ball")) return "Ball Arcade";
+    if (t.name.includes("Finlay")) return "Finlay Square";
+    return t.name;
   };
 
   return (
@@ -44,8 +57,22 @@ export default function Navbar() {
           </div>
         </Link>
 
-        {/* Right: Search Bar & Auth Badge */}
+        {/* Right: Search Bar, Location (on subpages), & Auth Badge */}
         <div className="flex items-center gap-3 md:gap-5">
+          {/* Location / Theatre Pill on sub-pages */}
+          {!isHomepage && (
+            <button
+              onClick={openTheatreModal}
+              className="hidden sm:flex items-center gap-2 bg-white hover:bg-gray-100 rounded-full px-3.5 py-1.5 shadow-md hover:ring-2 hover:ring-[#D4AF37] transition text-xs font-semibold text-gray-800 border border-gray-200 cursor-pointer"
+              title="Change Theatre Location"
+            >
+              <MapPin className="w-3.5 h-3.5 text-red-600 fill-red-500 shrink-0" />
+              <span className="truncate max-w-[140px]">
+                {formatTheatreLabel(selectedTheatre)}
+              </span>
+            </button>
+          )}
+
           {/* Wireframe Page 2 Search Bar: Gold square icon button + White input pill */}
           <form
             onSubmit={handleSearch}

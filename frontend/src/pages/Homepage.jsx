@@ -119,6 +119,15 @@ export default function Homepage() {
     },
   ];
 
+  const formatTheatreLabel = (t) => {
+    if (!t) return "Bashundhara Shopping Mall , Panthapath";
+    if (t.name.includes("Bashundhara")) return "Bashundhara Shopping Mall , Panthapath";
+    if (t.name.includes("Sony")) return "Sony Square , Mirpur";
+    if (t.name.includes("Ball")) return "Ball Arcade , Chattagram";
+    if (t.name.includes("Finlay")) return "Finlay Square , Chattagram";
+    return `${t.name}${t.location ? ` , ${t.location.replace(/, Dhaka/g, "")}` : ""}`;
+  };
+
   const rawList = movies.length > 0 ? movies : fallbackMovies;
   const displayMovies = rawList.filter((m) =>
     searchFilter ? m.title.toLowerCase().includes(searchFilter.toLowerCase()) : true
@@ -139,8 +148,8 @@ export default function Homepage() {
             title="Choose Theatre Location"
           >
             <MapPin className="w-4 h-4 text-red-600 fill-red-500 shrink-0 transition-transform group-hover:scale-110" />
-            <span className="truncate max-w-[160px] sm:max-w-[220px]">
-              {selectedTheatre ? selectedTheatre.name : "Bashundhara Shopping Mall"}
+            <span className="truncate max-w-[180px] sm:max-w-[260px]">
+              {selectedTheatre ? formatTheatreLabel(selectedTheatre) : "Bashundhara Shopping Mall , Panthapath"}
             </span>
           </button>
         </div>
