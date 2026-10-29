@@ -83,7 +83,7 @@ export default function Homepage() {
   }, [activeTab]);
 
   // Fallback movies matching Wireframe Page 4 sequence
-  const fallbackMovies = [
+  const fallbackNowShowing = [
     {
       id: 3,
       title: "Minions & Monsters",
@@ -136,6 +136,26 @@ export default function Homepage() {
     },
   ];
 
+  // Fallback Coming Soon movies
+  const fallbackComingSoon = [
+    {
+      id: 7,
+      title: "Dune : Part three",
+      category: "IMAX",
+      poster_url: "/images/poster-dune3.png",
+      status: "COMING_SOON",
+      duration_minutes: 165,
+    },
+    {
+      id: 8,
+      title: "Avengers: Doomsday",
+      category: "IMAX 3D",
+      poster_url: "/images/poster-avengers-doomsday.png",
+      status: "COMING_SOON",
+      duration_minutes: 180,
+    },
+  ];
+
   const formatTheatreLabel = (t) => {
     if (!t) return "Bashundhara Shopping Mall , Panthapath";
     if (t.name.includes("Bashundhara")) return "Bashundhara Shopping Mall , Panthapath";
@@ -146,9 +166,10 @@ export default function Homepage() {
   };
 
   // Sort list to match Page 4 wireframe sequence: Minions -> Moana -> Spider-Man -> The Odyssey -> others
-  const rawList = movies.length > 0 ? movies : fallbackMovies;
+  const fallbackList = activeTab === "COMING SOON" ? fallbackComingSoon : fallbackNowShowing;
+  const rawList = movies.length > 0 ? movies : fallbackList;
   const sortedList = [...rawList].sort((a, b) => {
-    const order = ["minion", "moana", "spider", "odyssey", "clayface", "supergirl"];
+    const order = ["minion", "moana", "spider", "odyssey", "clayface", "supergirl", "dune", "avenger"];
     const aIdx = order.findIndex((k) => a.title.toLowerCase().includes(k));
     const bIdx = order.findIndex((k) => b.title.toLowerCase().includes(k));
     if (aIdx !== -1 && bIdx !== -1) return aIdx - bIdx;
@@ -368,14 +389,21 @@ export default function Homepage() {
                     {/* Subtle vignette shadow overlay at bottom of poster */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
 
-                    {/* Dark Bronze Floating "GET TICKETS" Button (Wireframe Page 4) */}
+                    {/* Coming Soon Pill Badge */}
+                    {movie.status === "COMING_SOON" && (
+                      <span className="absolute top-3 right-3 z-20 bg-[#D4AF37] text-gray-950 text-[10px] sm:text-[11px] font-cinzel font-black px-2.5 py-0.5 rounded shadow-[0_2px_10px_rgba(212,175,55,0.5)] tracking-wider uppercase">
+                        COMING SOON
+                      </span>
+                    )}
+
+                    {/* Dark Bronze Floating CTA Button (Wireframe Page 4) */}
                     <Link
                       to={`/movie/${movie.id}`}
                       className="page4-ticket-btn absolute bottom-3.5 left-3.5 z-20 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xs flex items-center justify-center cursor-pointer group/btn"
-                      title={`Get tickets for ${movie.title}`}
+                      title={`${movie.status === "COMING_SOON" ? "View details for " : "Get tickets for "}${movie.title}`}
                     >
                       <span className="font-cinzel text-[11px] sm:text-xs font-bold text-[#E5C158] group-hover/btn:text-white tracking-[0.18em] uppercase transition-colors">
-                        GET TICKETS
+                        {movie.status === "COMING_SOON" ? "COMING SOON" : "GET TICKETS"}
                       </span>
                     </Link>
                   </div>

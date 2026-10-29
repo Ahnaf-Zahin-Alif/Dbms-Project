@@ -134,6 +134,36 @@ class Command(BaseCommand):
             },
         )
 
+        m7, _ = Movie.objects.get_or_create(
+            title="Dune : Part three",
+            defaults={
+                "category": "IMAX",
+                "actors": "TIMOTHÉE CHALAMET, ZENDAYA, FLORENCE PUGH, JAVIER BARDEM",
+                "genre": "Sci-Fi, Adventure, Drama",
+                "release_date": date(2026, 12, 18),
+                "language": "English",
+                "duration_minutes": 165,
+                "poster_url": "/images/poster-dune3.png",
+                "backdrop_url": "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=1600&auto=format&fit=crop",
+                "status": Movie.StatusChoice.COMING_SOON,
+            },
+        )
+
+        m8, _ = Movie.objects.get_or_create(
+            title="Avengers: Doomsday",
+            defaults={
+                "category": "IMAX 3D",
+                "actors": "ROBERT DOWNEY JR., PEDRO PASCAL, VANESSA KIRBY, JOSEPH QUINN",
+                "genre": "Action, Adventure, Sci-Fi",
+                "release_date": date(2026, 12, 18),
+                "language": "English",
+                "duration_minutes": 180,
+                "poster_url": "/images/poster-avengers-doomsday.png",
+                "backdrop_url": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1600&auto=format&fit=crop",
+                "status": Movie.StatusChoice.COMING_SOON,
+            },
+        )
+
         # 5. Shows (Wireframe Page 6: 12:50 pm, 3:00 pm, 6:00 pm)
         today = date.today()
         Show.objects.get_or_create(

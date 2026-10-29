@@ -124,12 +124,18 @@ export default function MovieDetails() {
 
             {/* Showtime CTA Button (Wireframe Page 5 Bottom) */}
             <div className="pt-6">
-              <Link
-                to={`/booking/movie/${movie?.id}`}
-                className="inline-block bg-[#3B2836] hover:bg-[#52374B] border border-[#D4AF37]/50 text-[#F2C94C] font-serif text-lg font-bold px-12 py-3 rounded-xl shadow-lg transition duration-200 tracking-wider text-center"
-              >
-                Showtime
-              </Link>
+              {movie?.status === "COMING_SOON" ? (
+                <div className="inline-block bg-[#1B213D] border border-[#D4AF37]/60 text-[#F2C94C] font-serif text-base sm:text-lg font-bold px-10 py-3 rounded-xl shadow-[0_4px_20px_rgba(212,175,55,0.2)] tracking-wider text-center">
+                  COMING SOON &bull; RELEASING {movie?.release_date || "2026"}
+                </div>
+              ) : (
+                <Link
+                  to={`/booking/movie/${movie?.id}`}
+                  className="inline-block bg-[#3B2836] hover:bg-[#52374B] border border-[#D4AF37]/50 text-[#F2C94C] font-serif text-lg font-bold px-12 py-3 rounded-xl shadow-lg transition duration-200 tracking-wider text-center"
+                >
+                  Showtime
+                </Link>
+              )}
             </div>
           </div>
         </div>
