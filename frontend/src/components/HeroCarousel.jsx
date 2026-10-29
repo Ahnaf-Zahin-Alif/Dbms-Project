@@ -125,17 +125,17 @@ export default function HeroCarousel({ movies = [] }) {
         className="absolute inset-0 bg-cover bg-center transition-all duration-1000 ease-out transform group-hover:scale-105"
         style={{ backgroundImage: `url(${current.backdrop})` }}
       >
-        {/* Cinematic Vignette Overlays for Maximum Contrast */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/50" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/40 to-transparent" />
+        {/* Subtle Cinematic Vignette Overlays preserving full-span image visibility */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/25 to-transparent" />
       </div>
 
-      {/* Cinematic Slide Content: Left Text Info + Right Poster Preview on Desktop */}
-      <div className="relative z-10 h-full max-w-7xl mx-auto px-6 sm:px-10 md:px-14 flex items-center justify-between gap-8">
-        {/* Left Side: Typography & Action */}
-        <div className="flex flex-col items-start text-left max-w-2xl py-8">
+      {/* Cinematic Slide Content: Full-span Typography & Action */}
+      <div className="relative z-10 h-full max-w-7xl mx-auto px-6 sm:px-10 md:px-14 flex items-center">
+        {/* Typography & Action Container */}
+        <div className="flex flex-col items-start text-left max-w-2xl py-8 drop-shadow-2xl">
           {/* Director / Studio Line */}
-          <p className="text-[11px] sm:text-xs md:text-sm tracking-[0.3em] font-medium text-[#C89B48] uppercase drop-shadow-md mb-2">
+          <p className="text-[11px] sm:text-xs md:text-sm tracking-[0.3em] font-medium text-[#C89B48] uppercase drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] mb-2">
             {current.director}
           </p>
 
@@ -147,12 +147,12 @@ export default function HeroCarousel({ movies = [] }) {
           </h1>
 
           {/* Date / Status */}
-          <p className="text-xl sm:text-2xl md:text-3xl font-cinzel font-bold tracking-[0.25em] text-[#C86D49] my-2 drop-shadow-md">
+          <p className="text-xl sm:text-2xl md:text-3xl font-cinzel font-bold tracking-[0.25em] text-[#C86D49] my-2 drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
             {current.date}
           </p>
 
           {/* Tagline / Format */}
-          <p className="text-[11px] sm:text-xs md:text-sm tracking-[0.2em] text-[#E0D0B5] uppercase font-medium drop-shadow mb-6">
+          <p className="text-[11px] sm:text-xs md:text-sm tracking-[0.2em] text-[#E0D0B5] uppercase font-medium drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] mb-6">
             {current.tagline}
           </p>
 
@@ -166,28 +166,6 @@ export default function HeroCarousel({ movies = [] }) {
             </Link>
           )}
         </div>
-
-        {/* Right Side: Featured Poster Card (Visible on tablet & desktop) */}
-        {current.poster && (
-          <div className="hidden sm:block shrink-0">
-            <Link
-              to={`/movie/${current.movieId}`}
-              className="block group/poster relative w-40 sm:w-48 md:w-56 lg:w-64 aspect-[2/3] rounded-xl overflow-hidden shadow-[0_12px_40px_rgba(0,0,0,0.9)] border-2 border-[#D4AF37]/50 hover:border-[#D4AF37] transition-all duration-300 hover:scale-105"
-              title={`View ${current.movieTitle}`}
-            >
-              <img
-                src={current.poster}
-                alt={current.movieTitle}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover/poster:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover/poster:opacity-100 transition-opacity flex items-end p-3">
-                <span className="text-[10px] font-bold tracking-wider text-[#D4AF37] uppercase bg-black/80 px-2 py-1 rounded">
-                  Book Now &rarr;
-                </span>
-              </div>
-            </Link>
-          </div>
-        )}
       </div>
 
       {/* Wireframe Page 2 Bottom Slider Dashes Indicator */}
