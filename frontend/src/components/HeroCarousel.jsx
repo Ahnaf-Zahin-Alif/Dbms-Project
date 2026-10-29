@@ -79,11 +79,9 @@ export default function HeroCarousel({ movies = [] }) {
           EXPERIENCE THE TERROR IN <span className="font-bold text-white tracking-widest">IMAX</span>
         </>
       ),
-      backdrop:
-        "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1600&auto=format&fit=crop",
-      poster:
-        "https://images.unsplash.com/photo-1509281373149-e957c6296406?q=80&w=800&auto=format&fit=crop",
-      titleColor: "gold-glitter-text",
+      backdrop: "/images/slide-clayface.jpg",
+      poster: "/images/poster-clayface.png",
+      titleColor: "text-red-500 drop-shadow-[0_4px_25px_rgba(239,68,68,0.6)]",
       movieId: movies.find((m) => m.title.toLowerCase().includes("clayface"))?.id || 4,
     },
     {

@@ -98,8 +98,8 @@ class Command(BaseCommand):
                 "release_date": date(2026, 10, 30),
                 "language": "English",
                 "duration_minutes": 135,
-                "poster_url": "https://images.unsplash.com/photo-1509281373149-e957c6296406?q=80&w=800&auto=format&fit=crop",
-                "backdrop_url": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1600&auto=format&fit=crop",
+                "poster_url": "/images/poster-clayface.png",
+                "backdrop_url": "/images/slide-clayface.jpg",
                 "status": Movie.StatusChoice.NOW_SHOWING,
             },
         )

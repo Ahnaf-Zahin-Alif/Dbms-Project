@@ -120,8 +120,7 @@ export default function Homepage() {
       id: 4,
       title: "Clayface",
       category: "IMAX",
-      poster_url:
-        "https://images.unsplash.com/photo-1509281373149-e957c6296406?q=80&w=800&auto=format&fit=crop",
+      poster_url: "/images/poster-clayface.png",
       status: "NOW_SHOWING",
       duration_minutes: 135,
     },
