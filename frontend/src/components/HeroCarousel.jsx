@@ -97,12 +97,26 @@ export default function HeroCarousel({ movies = [] }) {
           WOMAN OF TOMORROW &bull; IN <span className="font-bold text-white tracking-widest">IMAX 3D</span>
         </>
       ),
-      backdrop:
-        "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1600&auto=format&fit=crop",
-      poster:
-        "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=800&auto=format&fit=crop",
+      backdrop: "/images/slide-supergirl.jpg",
+      poster: "/images/poster-supergirl.png",
       titleColor: "text-amber-200 drop-shadow-[0_4px_25px_rgba(253,230,138,0.5)]",
       movieId: movies.find((m) => m.title.toLowerCase().includes("supergirl"))?.id || 5,
+    },
+    {
+      id: "bonolota",
+      movieTitle: "Bonolota Express",
+      director: "A CHARKHI ORIGINAL FILM",
+      title: "BONOLOTA EXPRESS",
+      date: "NOW SHOWING",
+      tagline: (
+        <>
+          JOURNEY OF SECRETS &bull; IN <span className="font-bold text-white tracking-widest">THEATRES NOW</span>
+        </>
+      ),
+      backdrop: "/images/slide-bonolota-express.jpg",
+      poster: "/images/poster-bonolota-express.png",
+      titleColor: "text-amber-400 drop-shadow-[0_4px_25px_rgba(251,191,36,0.6)]",
+      movieId: movies.find((m) => m.title.toLowerCase().includes("bonolota"))?.id || 9,
     },
   ];
 

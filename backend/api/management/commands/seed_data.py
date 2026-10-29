@@ -113,8 +113,8 @@ class Command(BaseCommand):
                 "release_date": date(2026, 6, 26),
                 "language": "English",
                 "duration_minutes": 148,
-                "poster_url": "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=800&auto=format&fit=crop",
-                "backdrop_url": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1600&auto=format&fit=crop",
+                "poster_url": "/images/poster-supergirl.png",
+                "backdrop_url": "/images/slide-supergirl.jpg",
                 "status": Movie.StatusChoice.NOW_SHOWING,
             },
         )
@@ -164,6 +164,21 @@ class Command(BaseCommand):
             },
         )
 
+        m9, _ = Movie.objects.get_or_create(
+            title="Bonolota Express",
+            defaults={
+                "category": "2D",
+                "actors": "MOSHARRAF KARIM, ZIAUL FARUQ APURBA, SABILA NUR",
+                "genre": "Mystery, Thriller, Drama",
+                "release_date": date(2026, 10, 25),
+                "language": "Bangla",
+                "duration_minutes": 130,
+                "poster_url": "/images/poster-bonolota-express.png",
+                "backdrop_url": "/images/slide-bonolota-express.jpg",
+                "status": Movie.StatusChoice.NOW_SHOWING,
+            },
+        )
+
         # 5. Shows (Wireframe Page 6: 12:50 pm, 3:00 pm, 6:00 pm)
         today = date.today()
         Show.objects.get_or_create(
@@ -195,7 +210,7 @@ class Command(BaseCommand):
             defaults={"price": 400.00},
         )
 
-        for movie_item in [m2, m4, m5]:
+        for movie_item in [m2, m4, m5, m9]:
             Show.objects.get_or_create(
                 movie=movie_item,
                 hall=h1,

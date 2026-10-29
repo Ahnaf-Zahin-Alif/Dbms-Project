@@ -129,10 +129,17 @@ export default function Homepage() {
       id: 5,
       title: "Supergirl",
       category: "IMAX 3D",
-      poster_url:
-        "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=800&auto=format&fit=crop",
+      poster_url: "/images/poster-supergirl.png",
       status: "NOW_SHOWING",
       duration_minutes: 148,
+    },
+    {
+      id: 9,
+      title: "Bonolota Express",
+      category: "2D",
+      poster_url: "/images/poster-bonolota-express.png",
+      status: "NOW_SHOWING",
+      duration_minutes: 130,
     },
   ];
 
@@ -169,7 +176,7 @@ export default function Homepage() {
   const fallbackList = activeTab === "COMING SOON" ? fallbackComingSoon : fallbackNowShowing;
   const rawList = movies.length > 0 ? movies : fallbackList;
   const sortedList = [...rawList].sort((a, b) => {
-    const order = ["minion", "moana", "spider", "odyssey", "clayface", "supergirl", "dune", "avenger"];
+    const order = ["minion", "moana", "spider", "odyssey", "bonolota", "clayface", "supergirl", "dune", "avenger"];
     const aIdx = order.findIndex((k) => a.title.toLowerCase().includes(k));
     const bIdx = order.findIndex((k) => b.title.toLowerCase().includes(k));
     if (aIdx !== -1 && bIdx !== -1) return aIdx - bIdx;
