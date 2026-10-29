@@ -102,11 +102,11 @@ export default function Homepage() {
     },
     {
       id: 1,
-      title: "Spider-Man: Brand New Day",
+      title: "Spider-Man: No Way Home",
       category: "2D",
       poster_url: "/images/poster3-spiderman.png",
       status: "NOW_SHOWING",
-      duration_minutes: 180,
+      duration_minutes: 148,
     },
     {
       id: 2,

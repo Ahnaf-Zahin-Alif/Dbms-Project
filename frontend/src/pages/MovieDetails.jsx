@@ -23,15 +23,14 @@ export default function MovieDetails() {
         if (isMounted) {
           setMovie({
             id,
-            title: "Spider-Man: Brand New Day (2D)",
+            title: "Spider-Man: No Way Home",
             category: "2D",
-            actors: "TOM HOLLAND, ZENDAYA, SADIE SINK, LIZA COLÓN, JACOB BA",
+            actors: "TOM HOLLAND, ZENDAYA, BENEDICT CUMBERBATCH, JACOB BATALON",
             genre: "Action, Adventure, Sci-Fi",
             release_date: "2026-07-30",
             language: "English",
-            duration_minutes: 180,
-            poster_url:
-              "https://images.unsplash.com/photo-1635805737707-575885ab0820?q=80&w=800&auto=format&fit=crop",
+            duration_minutes: 148,
+            poster_url: "/images/poster3-spiderman.png",
           });
         }
       } finally {

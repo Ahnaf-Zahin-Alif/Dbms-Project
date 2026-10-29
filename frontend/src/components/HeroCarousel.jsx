@@ -56,10 +56,10 @@ export default function HeroCarousel({ movies = [] }) {
     },
     {
       id: "spiderman",
-      movieTitle: "Spider-Man: Brand New Day (2D)",
+      movieTitle: "Spider-Man: No Way Home",
       director: "MARVEL STUDIOS & SONY PICTURES",
-      title: "SPIDER-MAN",
-      date: "07.30.26",
+      title: "SPIDER-MAN: NO WAY HOME",
+      date: "NOW SHOWING",
       tagline: (
         <>
           EXPERIENCE IT IN <span className="font-bold text-white tracking-widest">IMAX 2D & 3D</span>

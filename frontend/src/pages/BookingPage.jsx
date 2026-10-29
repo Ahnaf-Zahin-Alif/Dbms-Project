@@ -406,7 +406,7 @@ export default function BookingPage() {
                   {movie?.category || "2D"}
                 </span>
                 <h3 className="font-bold text-sm text-gray-100 mt-1">
-                  {movie?.title || "Spider-Man: Brand New Day"}
+                  {movie?.title || "Spider-Man: No Way Home"}
                 </h3>
                 <p className="text-xs text-gray-400">Duration: 3 hour</p>
               </div>

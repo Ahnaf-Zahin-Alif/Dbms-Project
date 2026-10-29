@@ -45,15 +45,15 @@ class Command(BaseCommand):
 
         # 4. Movies (Wireframe Pages 2, 4, 5)
         m1, _ = Movie.objects.get_or_create(
-            title="Spider-Man: Brand New Day (2D)",
+            title="Spider-Man: No Way Home",
             defaults={
                 "category": "2D",
-                "actors": "TOM HOLLAND, ZENDAYA, SADIE SINK, LIZA COLÓN, JACOB BA",
+                "actors": "TOM HOLLAND, ZENDAYA, BENEDICT CUMBERBATCH, JACOB BATALON",
                 "genre": "Action, Adventure, Sci-Fi",
                 "release_date": date(2026, 7, 30),
                 "language": "English",
-                "duration_minutes": 180,
-                "poster_url": "https://images.unsplash.com/photo-1635805737707-575885ab0820?q=80&w=800&auto=format&fit=crop",
+                "duration_minutes": 148,
+                "poster_url": "/images/poster3-spiderman.png",
                 "backdrop_url": "https://images.unsplash.com/photo-1635805737707-575885ab0820?q=80&w=1600&auto=format&fit=crop",
                 "status": Movie.StatusChoice.NOW_SHOWING,
             },
@@ -68,7 +68,7 @@ class Command(BaseCommand):
                 "release_date": date(2026, 7, 17),
                 "language": "English",
                 "duration_minutes": 165,
-                "poster_url": "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=800&auto=format&fit=crop",
+                "poster_url": "/images/poster4-odyssey.png",
                 "backdrop_url": "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1600&auto=format&fit=crop",
                 "status": Movie.StatusChoice.NOW_SHOWING,
             },
@@ -83,7 +83,7 @@ class Command(BaseCommand):
                 "release_date": date(2026, 6, 20),
                 "language": "English",
                 "duration_minutes": 105,
-                "poster_url": "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?q=80&w=800&auto=format&fit=crop",
+                "poster_url": "/images/poster1-minions.png",
                 "backdrop_url": "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?q=80&w=1600&auto=format&fit=crop",
                 "status": Movie.StatusChoice.NOW_SHOWING,
             },
