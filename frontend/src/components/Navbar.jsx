@@ -33,16 +33,13 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-40 bg-[#1D121F] border-b border-[#2D1B30] px-3 sm:px-6 lg:px-10 py-3 transition-colors shadow-lg w-full">
       <div className="w-full flex items-center justify-between gap-4">
-        {/* Left: CINEFILM Logo (exact wireframe logo with gold borders) */}
         <Link to="/" className="flex items-center group">
           <div className="relative flex flex-col items-center">
-            {/* Display exact wireframe logo image with CSS fallback */}
             <img
               src="/images/cinefilm-logo.png"
               alt="CINEFILM"
               className="h-8 sm:h-10 md:h-11 object-contain transition-transform group-hover:scale-[1.02]"
               onError={(e) => {
-                // In case image isn't loaded, fallback to CSS rendering
                 e.target.style.display = "none";
                 e.target.nextSibling.style.display = "flex";
               }}
@@ -57,9 +54,7 @@ export default function Navbar() {
           </div>
         </Link>
 
-        {/* Right: Search Bar, Location (on subpages), & Auth Badge */}
         <div className="flex items-center gap-3 md:gap-5">
-          {/* Location / Theatre Pill on sub-pages */}
           {!isHomepage && (
             <button
               onClick={openTheatreModal}
@@ -73,7 +68,6 @@ export default function Navbar() {
             </button>
           )}
 
-          {/* Wireframe Page 2 Search Bar: Gold square icon button + White input pill */}
           <form
             onSubmit={handleSearch}
             className="flex items-center bg-white rounded-full overflow-hidden shadow-inner border border-[#C6A052] w-48 sm:w-60 md:w-72"
@@ -94,7 +88,6 @@ export default function Navbar() {
             />
           </form>
 
-          {/* User Auth Pill */}
           {isAuthenticated ? (
             <div className="flex items-center gap-2 bg-[#2E1F33] border border-[#D4AF37]/50 rounded-full px-3 py-1.5 text-xs shadow-sm">
               <User className="w-4 h-4 text-[#D4AF37]" />

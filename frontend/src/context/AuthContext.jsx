@@ -23,7 +23,7 @@ export function AuthProvider({ children }) {
 
   const [accessToken, setAccessToken] = useState(() => localStorage.getItem("access_token"));
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [authMode, setAuthMode] = useState("login"); // "login" or "register"
+  const [authMode, setAuthMode] = useState("login");
 
   const login = async (username, password) => {
     const res = await api.post("/api/token/", { username, password });

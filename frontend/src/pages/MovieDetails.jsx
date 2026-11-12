@@ -19,7 +19,6 @@ export default function MovieDetails() {
         }
       } catch (err) {
         console.error("Error loading movie:", err);
-        // Fallback for Spider-Man from Wireframe Page 5
         if (isMounted) {
           setMovie({
             id,
@@ -57,7 +56,6 @@ export default function MovieDetails() {
   return (
     <div className="min-h-screen bg-[#0B0E1E] text-white py-8 px-4 md:px-8">
       <div className="max-w-6xl mx-auto">
-        {/* Back Link */}
         <button
           onClick={() => navigate(-1)}
           className="flex items-center gap-2 text-sm text-[#D4AF37] hover:underline mb-8"
@@ -65,9 +63,7 @@ export default function MovieDetails() {
           <ArrowLeft className="w-4 h-4" /> Back to Movies
         </button>
 
-        {/* Wireframe Page 5 Layout: Poster on left, details on right */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-start bg-[#12162A]/60 border border-[#D4AF37]/20 rounded-2xl p-6 md:p-10 backdrop-blur-md shadow-2xl">
-          {/* Left Poster */}
           <div className="md:col-span-5 flex justify-center">
             <div className="relative aspect-2/3 w-full max-w-sm rounded-xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.8)] border border-[#D4AF37]/40">
               <img
@@ -78,7 +74,6 @@ export default function MovieDetails() {
             </div>
           </div>
 
-          {/* Right Details (Exact format from Wireframe Page 5) */}
           <div className="md:col-span-7 flex flex-col justify-between h-full space-y-6">
             <div>
               <h1 className="text-2xl md:text-4xl font-bold font-serif text-[#F2C94C] drop-shadow-[0_2px_10px_rgba(242,201,76,0.3)]">
@@ -122,7 +117,6 @@ export default function MovieDetails() {
               </div>
             </div>
 
-            {/* Showtime CTA Button (Wireframe Page 5 Bottom) */}
             <div className="pt-6">
               {movie?.status === "COMING_SOON" ? (
                 <div className="inline-block bg-[#1B213D] border border-[#D4AF37]/60 text-[#F2C94C] font-serif text-base sm:text-lg font-bold px-10 py-3 rounded-xl shadow-[0_4px_20px_rgba(212,175,55,0.2)] tracking-wider text-center">

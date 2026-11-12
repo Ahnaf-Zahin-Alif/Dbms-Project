@@ -22,26 +22,27 @@ class Command(BaseCommand):
             created_theatres.append(t)
         self.stdout.write(f"Created {len(created_theatres)} theatres.")
 
-        # 2. Halls for the primary theatre
-        main_theatre = created_theatres[0]
-        h1, _ = Hall.objects.get_or_create(theatre=main_theatre, name="Hall 1")
-        h2, _ = Hall.objects.get_or_create(theatre=main_theatre, name="Hall 2")
+        # 2. Halls & Seats (Rows A-G, cols 1-12) for every theatre
+        theatre_halls = {}
+        for theatre in created_theatres:
+            h1, _ = Hall.objects.get_or_create(theatre=theatre, name="Hall 1")
+            h2, _ = Hall.objects.get_or_create(theatre=theatre, name="Hall 2")
+            theatre_halls[theatre.id] = (h1, h2)
 
-        # 3. Seats (Rows A-G, cols 1-12) for Hall 1 & Hall 2 (Wireframe Page 8)
-        for h in [h1, h2]:
-            seat_count = 0
-            for r in ["A", "B", "C", "D", "E", "F", "G"]:
-                is_premium = r in ["A", "B"]
-                for num in range(1, 13):
-                    s_num = f"{r}{num:02d}"
-                    Seat.objects.get_or_create(
-                        hall=h,
-                        seat_number=s_num,
-                        row=r,
-                        seat_type=Seat.SeatType.PREMIUM if is_premium else Seat.SeatType.REGULAR,
-                    )
-                    seat_count += 1
-            self.stdout.write(f"Generated {seat_count} seats for {h.name}.")
+            for h in [h1, h2]:
+                seat_count = 0
+                for r in ["A", "B", "C", "D", "E", "F", "G"]:
+                    is_premium = r in ["A", "B"]
+                    for num in range(1, 13):
+                        s_num = f"{r}{num:02d}"
+                        Seat.objects.get_or_create(
+                            hall=h,
+                            seat_number=s_num,
+                            row=r,
+                            seat_type=Seat.SeatType.PREMIUM if is_premium else Seat.SeatType.REGULAR,
+                        )
+                        seat_count += 1
+                self.stdout.write(f"Ensured {seat_count} seats for {theatre.name} - {h.name}.")
 
         # 4. Movies (Wireframe Pages 2, 4, 5)
         m1, _ = Movie.objects.get_or_create(
@@ -179,52 +180,54 @@ class Command(BaseCommand):
             },
         )
 
-        # 5. Shows (Wireframe Page 6: 12:50 pm, 3:00 pm, 6:00 pm)
+        # 5. Shows (Wireframe Page 6: 12:50 pm, 3:00 pm, 6:00 pm) across all theatres
         today = date.today()
-        Show.objects.get_or_create(
-            movie=m1,
-            hall=h1,
-            show_date=today,
-            start_time=time(12, 50),
-            defaults={"price": 450.00},
-        )
-        Show.objects.get_or_create(
-            movie=m1,
-            hall=h1,
-            show_date=today,
-            start_time=time(15, 0),
-            defaults={"price": 450.00},
-        )
-        Show.objects.get_or_create(
-            movie=m1,
-            hall=h1,
-            show_date=today,
-            start_time=time(18, 0),
-            defaults={"price": 500.00},
-        )
-        Show.objects.get_or_create(
-            movie=m1,
-            hall=h2,
-            show_date=today,
-            start_time=time(12, 0),
-            defaults={"price": 400.00},
-        )
+        for theatre in created_theatres:
+            th_h1, th_h2 = theatre_halls[theatre.id]
+            Show.objects.get_or_create(
+                movie=m1,
+                hall=th_h1,
+                show_date=today,
+                start_time=time(12, 50),
+                defaults={"price": 450.00},
+            )
+            Show.objects.get_or_create(
+                movie=m1,
+                hall=th_h1,
+                show_date=today,
+                start_time=time(15, 0),
+                defaults={"price": 450.00},
+            )
+            Show.objects.get_or_create(
+                movie=m1,
+                hall=th_h1,
+                show_date=today,
+                start_time=time(18, 0),
+                defaults={"price": 500.00},
+            )
+            Show.objects.get_or_create(
+                movie=m1,
+                hall=th_h2,
+                show_date=today,
+                start_time=time(12, 0),
+                defaults={"price": 400.00},
+            )
 
-        for movie_item in [m2, m4, m5, m9]:
-            Show.objects.get_or_create(
-                movie=movie_item,
-                hall=h1,
-                show_date=today,
-                start_time=time(14, 0),
-                defaults={"price": 550.00},
-            )
-            Show.objects.get_or_create(
-                movie=movie_item,
-                hall=h1,
-                show_date=today,
-                start_time=time(19, 30),
-                defaults={"price": 600.00},
-            )
+            for movie_item in [m2, m3, m4, m5, m6, m9]:
+                Show.objects.get_or_create(
+                    movie=movie_item,
+                    hall=th_h1,
+                    show_date=today,
+                    start_time=time(14, 0),
+                    defaults={"price": 550.00},
+                )
+                Show.objects.get_or_create(
+                    movie=movie_item,
+                    hall=th_h2,
+                    show_date=today,
+                    start_time=time(19, 30),
+                    defaults={"price": 600.00},
+                )
 
         self.stdout.write(self.style.SUCCESS("Database seeded successfully with wireframe data!"))
 

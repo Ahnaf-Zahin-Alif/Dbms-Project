@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 export default function HeroCarousel({ movies = [] }) {
-  // Curated hero slides including the 4 user-uploaded movies + featured titles
   const slides = [
     {
       id: "odyssey",
@@ -120,7 +119,6 @@ export default function HeroCarousel({ movies = [] }) {
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Auto-advance slides every 6 seconds
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % slides.length);
@@ -132,43 +130,34 @@ export default function HeroCarousel({ movies = [] }) {
 
   return (
     <div className="relative w-full h-[62vh] sm:h-[70vh] md:h-[76vh] lg:h-[80vh] min-h-[460px] max-h-[820px] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border border-blue-900/40 group bg-black select-none">
-      {/* Background Backdrop with Cover and Center alignment */}
       <div
         className="absolute inset-0 bg-cover bg-center transition-all duration-1000 ease-out transform group-hover:scale-105"
         style={{ backgroundImage: `url(${current.backdrop})` }}
       >
-        {/* Subtle Cinematic Vignette Overlays preserving full-span image visibility */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/25 to-transparent" />
       </div>
 
-      {/* Cinematic Slide Content: Full-span Typography & Action */}
       <div className="relative z-10 h-full max-w-7xl mx-auto px-6 sm:px-10 md:px-14 flex items-center">
-        {/* Typography & Action Container */}
         <div className="flex flex-col items-start text-left max-w-2xl py-8 drop-shadow-2xl">
-          {/* Director / Studio Line */}
           <p className="text-[11px] sm:text-xs md:text-sm tracking-[0.3em] font-medium text-[#C89B48] uppercase drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] mb-2">
             {current.director}
           </p>
 
-          {/* Hero Title */}
           <h1
             className={`text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-cinzel font-black tracking-[0.18em] my-1 drop-shadow-[0_4px_25px_rgba(0,0,0,0.95)] ${current.titleColor}`}
           >
             {current.title}
           </h1>
 
-          {/* Date / Status */}
           <p className="text-xl sm:text-2xl md:text-3xl font-cinzel font-bold tracking-[0.25em] text-[#C86D49] my-2 drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
             {current.date}
           </p>
 
-          {/* Tagline / Format */}
           <p className="text-[11px] sm:text-xs md:text-sm tracking-[0.2em] text-[#E0D0B5] uppercase font-medium drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] mb-6">
             {current.tagline}
           </p>
 
-          {/* Quick Ticket Action */}
           {current.movieId && (
             <Link
               to={`/movie/${current.movieId}`}
@@ -180,7 +169,6 @@ export default function HeroCarousel({ movies = [] }) {
         </div>
       </div>
 
-      {/* Wireframe Page 2 Bottom Slider Dashes Indicator */}
       <div className="absolute bottom-5 left-0 right-0 z-20 flex justify-center items-center gap-2">
         {slides.map((_, idx) => {
           const isActive = idx === currentIndex;

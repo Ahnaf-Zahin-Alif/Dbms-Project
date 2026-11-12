@@ -10,8 +10,8 @@ export default function Homepage() {
   const [movies, setMovies] = useState([]);
   const [activeTab, setActiveTab] = useState("NOW SHOWING");
   const [loading, setLoading] = useState(true);
-  const [modalType, setModalType] = useState(null); // 'TICKET_PRICE', 'ABOUT_US', 'CONTACT'
-  const [sidebarOpen, setSidebarOpen] = useState(true); // desktop default open
+  const [modalType, setModalType] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isCatalogVisible, setIsCatalogVisible] = useState(false);
 
   const catalogRef = useRef(null);
@@ -19,7 +19,6 @@ export default function Homepage() {
   const searchFilter = searchParams.get("search") || "";
   const { selectedTheatre, openTheatreModal } = useTheatre();
 
-  // Tabs from Wireframe Page 4
   const tabs = [
     "NOW SHOWING",
     "COMING SOON",
@@ -28,7 +27,6 @@ export default function Homepage() {
     "VIEW ALL",
   ];
 
-  // Scroll Reveal Observer: Triggers animation when user scrolls to Page 4 section
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -82,7 +80,6 @@ export default function Homepage() {
     };
   }, [activeTab]);
 
-  // Fallback movies matching Wireframe Page 4 sequence
   const fallbackNowShowing = [
     {
       id: 3,
@@ -142,7 +139,6 @@ export default function Homepage() {
     },
   ];
 
-  // Fallback Coming Soon movies
   const fallbackComingSoon = [
     {
       id: 7,
@@ -171,7 +167,6 @@ export default function Homepage() {
     return `${t.name}${t.location ? ` , ${t.location.replace(/, Dhaka/g, "")}` : ""}`;
   };
 
-  // Sort list to match Page 4 wireframe sequence: Minions -> Moana -> Spider-Man -> The Odyssey -> others
   const fallbackList = activeTab === "COMING SOON" ? fallbackComingSoon : fallbackNowShowing;
   const rawList = movies.length > 0 ? movies : fallbackList;
   const sortedList = [...rawList].sort((a, b) => {
@@ -194,15 +189,10 @@ export default function Homepage() {
 
   return (
     <div className="bg-gradient-to-b from-[#070A1E] via-[#090D24] to-[#050714] text-white min-h-screen w-full overflow-x-hidden">
-      {/* Modals for Sidebar items (Ticket Price, About Us, Contact) */}
       <NavModals modalType={modalType} onClose={() => setModalType(null)} />
 
-      {/* =========================================================================
-          SECTION 1: HERO CONTAINER (Wireframe Page 2 - Stretched Widescreen)
-          ========================================================================= */}
       <section className="w-full px-3 sm:px-6 lg:px-10 pt-2 pb-6 min-h-[85vh] lg:min-h-[88vh] flex flex-col justify-between">
         <div>
-          {/* Sub-header Bar: Location Pill on the Right */}
           <div className="w-full flex justify-end items-center mb-2.5">
             <button
               onClick={openTheatreModal}
@@ -216,11 +206,8 @@ export default function Homepage() {
             </button>
           </div>
 
-          {/* Main Page 2 Layout: Sidebar on Left + Carousel on Right (Widescreen Stretch) */}
           <div className="flex flex-col md:flex-row items-stretch gap-4 lg:gap-6 w-full">
-            {/* LEFT SIDEBAR (Wireframe Page 2 exact menu) */}
             <div className="w-full md:w-[170px] lg:w-[190px] shrink-0 flex flex-col">
-              {/* Hamburger Button */}
               <div className="mb-4 flex items-center">
                 <button
                   onClick={() => setSidebarOpen((prev) => !prev)}
@@ -234,15 +221,11 @@ export default function Homepage() {
                 </button>
               </div>
 
-              {/* Menu Buttons Stack with Vertical Gold Line */}
               {sidebarOpen && (
                 <div className="relative">
-                  {/* The vertical bright gold line running down the right edge */}
                   <div className="hidden md:block absolute right-0 -top-3 -bottom-3 w-[2.5px] gold-accent-line rounded-full z-10" />
 
-                  {/* 4 Stacked Bronze Buttons */}
                   <div className="flex flex-col divide-y divide-[#221B13] border-y border-[#3A2F20] shadow-xl rounded-l-xs overflow-hidden">
-                    {/* 1. HOME */}
                     <button
                       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
                       className="bronze-nav-btn w-full py-2.5 px-3 text-center cursor-pointer group"
@@ -252,7 +235,6 @@ export default function Homepage() {
                       </span>
                     </button>
 
-                    {/* 2. TICKET PRICE */}
                     <button
                       onClick={() => setModalType("TICKET_PRICE")}
                       className="bronze-nav-btn w-full py-2.5 px-3 text-center cursor-pointer group"
@@ -262,7 +244,6 @@ export default function Homepage() {
                       </span>
                     </button>
 
-                    {/* 3. ABOUT US */}
                     <button
                       onClick={() => setModalType("ABOUT_US")}
                       className="bronze-nav-btn w-full py-2.5 px-3 text-center cursor-pointer group"
@@ -272,7 +253,6 @@ export default function Homepage() {
                       </span>
                     </button>
 
-                    {/* 4. CONTACT */}
                     <button
                       onClick={() => setModalType("CONTACT")}
                       className="bronze-nav-btn w-full py-2.5 px-3 text-center cursor-pointer group"
@@ -286,14 +266,12 @@ export default function Homepage() {
               )}
             </div>
 
-            {/* RIGHT COLUMN: HERO CAROUSEL CARD (Widescreen Stretch) */}
             <div className="w-full md:flex-1 min-w-0 flex-grow">
               <HeroCarousel movies={displayMovies} />
             </div>
           </div>
         </div>
 
-        {/* Scroll Indicator Prompt to Guide User Down */}
         <div className="flex justify-center mt-6 mb-1">
           <button
             onClick={scrollToCatalog}
@@ -305,15 +283,11 @@ export default function Homepage() {
         </div>
       </section>
 
-      {/* =========================================================================
-          SECTION 2: CATALOG SECTION (Wireframe Page 4 - Stretched Widescreen)
-          ========================================================================= */}
       <section
         ref={catalogRef}
         id="catalog-section"
         className="w-full transition-opacity duration-700 min-h-screen border-t border-[#D4AF37]/20"
       >
-        {/* Full-width Page 4 Dark Wine Header Bar with Tabs */}
         <div
           className={`w-full bg-[#1D121F] border-b border-[#2C1D2E] px-4 sm:px-8 py-3.5 transition-all duration-700 ${
             isCatalogVisible ? "animate-slide-down-header" : "opacity-0"
@@ -344,7 +318,6 @@ export default function Homepage() {
           </div>
         </div>
 
-        {/* Sub-bar below tabs: Left Hamburger Icon matching Page 4 */}
         <div className="w-full px-3 sm:px-6 lg:px-10 pt-5 pb-2">
           <div className="flex items-center justify-between">
             <button
@@ -363,7 +336,6 @@ export default function Homepage() {
           </div>
         </div>
 
-        {/* Page 4 Movie Posters Grid (Stretched Widescreen Grid) */}
         <div className="w-full px-3 sm:px-6 lg:px-10 pb-16">
           {loading ? (
             <div className="flex justify-center items-center py-28">
@@ -381,7 +353,6 @@ export default function Homepage() {
                     animationDelay: `${idx * 130}ms`,
                   }}
                 >
-                  {/* Poster Image (Takes full card body) */}
                   <div className="relative aspect-[2/3] overflow-hidden bg-black select-none">
                     <img
                       src={
@@ -392,17 +363,14 @@ export default function Homepage() {
                       className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                     />
 
-                    {/* Subtle vignette shadow overlay at bottom of poster */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
 
-                    {/* Coming Soon Pill Badge */}
                     {movie.status === "COMING_SOON" && (
                       <span className="absolute top-3 right-3 z-20 bg-[#D4AF37] text-gray-950 text-[10px] sm:text-[11px] font-cinzel font-black px-2.5 py-0.5 rounded shadow-[0_2px_10px_rgba(212,175,55,0.5)] tracking-wider uppercase">
                         COMING SOON
                       </span>
                     )}
 
-                    {/* Dark Bronze Floating CTA Button (Wireframe Page 4) */}
                     <Link
                       to={`/movie/${movie.id}`}
                       className="page4-ticket-btn absolute bottom-3.5 left-3.5 z-20 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xs flex items-center justify-center cursor-pointer group/btn"

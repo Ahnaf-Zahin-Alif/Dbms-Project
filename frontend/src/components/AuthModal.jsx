@@ -38,7 +38,6 @@ export default function AuthModal() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-xs p-4">
-      {/* Page 7 Modal Container */}
       <div className="relative w-full max-w-md rounded-2xl bg-[#EBECEF] p-8 text-gray-900 shadow-2xl border border-gray-300">
         <button
           onClick={closeAuthModal}
@@ -47,7 +46,6 @@ export default function AuthModal() {
           <X className="w-5 h-5" />
         </button>
 
-        {/* Modal Title Banner */}
         <div className="mx-auto mb-8 w-fit rounded-xl border border-gray-300 bg-white px-8 py-3 text-center shadow-md">
           <h2 className="text-xl font-bold tracking-wider text-gray-800 uppercase font-serif">
             {authMode === "login" ? "Login to Cinefilm" : "Register to Cinefilm"}

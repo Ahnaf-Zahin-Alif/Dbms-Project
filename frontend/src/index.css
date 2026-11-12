@@ -9,12 +9,10 @@
   }
 }
 
-/* Cinematic Serif Font */
 .font-cinzel {
   font-family: 'Cinzel', Georgia, serif;
 }
 
-/* Gold Glitter Text */
 .gold-glitter-text {
   background: linear-gradient(135deg, #ECC86C 0%, #FFF3B3 22%, #AA771C 48%, #FFDF73 72%, #9B6C14 100%);
   -webkit-background-clip: text;
@@ -22,7 +20,6 @@
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8));
 }
 
-/* Bronze Sidebar Navigation Button */
 .bronze-nav-btn {
   background: linear-gradient(180deg, #4A3E2D 0%, #3B3022 50%, #2A2116 100%);
   border-top: 1px solid rgba(220, 185, 115, 0.35);
@@ -41,13 +38,11 @@
   transform: translateY(1px);
 }
 
-/* Vertical Gold Accent Line */
 .gold-accent-line {
   background: linear-gradient(180deg, #EDD16D 0%, #D4AF37 50%, #EDD16D 100%);
   box-shadow: 0 0 8px rgba(237, 209, 109, 0.6);
 }
 
-/* The Odyssey Terracotta/Copper Title */
 .odyssey-title {
   background: linear-gradient(180deg, #D96A42 0%, #C34B2B 55%, #8B2C13 100%);
   -webkit-background-clip: text;
@@ -55,11 +50,6 @@
   filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.9));
 }
 
-/* =========================================================================
-   THEATRE MODAL / DROPDOWN (Wireframe Page 3)
-   ========================================================================= */
-
-/* 3D Offset Shadow Title Box: soft light grey bg with dual border-shadow */
 .theatre-title-box {
   background-color: #E6E2E3;
   border: 2px solid #141416;
@@ -67,7 +57,6 @@
   box-shadow: 12px 12px 0px #CBD0DC, 12px 12px 0px 2px #141416;
 }
 
-/* 3D Offset Shadow Pill: warm ivory cream bg with slate shadow and dark outline */
 .theatre-pill-btn {
   background-color: #FAF5EE;
   border: 2px solid #1E232E;
@@ -87,18 +76,12 @@
   box-shadow: 0px 0px 0px #4E5760, 0px 0px 0px 2px #1E232E;
 }
 
-/* Selected state highlight for theatre pill */
 .theatre-pill-selected {
   background-color: #FFFDF8 !important;
   border: 2.5px solid #D4AF37 !important;
   box-shadow: 8px 8px 0px #856C2B, 8px 8px 0px 2.5px #1E232E !important;
 }
 
-/* =========================================================================
-   PAGE 4 WIREFRAME POSTER BUTTON & SCROLL ANIMATIONS
-   ========================================================================= */
-
-/* Dark Bronze "GET TICKETS" button floating on poster (Wireframe Page 4) */
 .page4-ticket-btn {
   background: rgba(45, 30, 20, 0.88);
   backdrop-filter: blur(4px);
@@ -114,7 +97,6 @@
   transform: translateY(-2px);
 }
 
-/* Scroll reveal animations */
 @keyframes fadeInUp {
   from {
     opacity: 0;

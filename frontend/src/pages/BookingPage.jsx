@@ -5,20 +5,43 @@ import { useAuth } from "../context/AuthContext";
 import { useTheatre } from "../context/TheatreContext";
 import { CheckCircle2, AlertCircle, ArrowLeft } from "lucide-react";
 
+function buildFallbackSeats() {
+  const rows = ["A", "B", "C", "D", "E", "F", "G"];
+  const generated = [];
+  let idCounter = 1;
+  rows.forEach((r) => {
+    for (let i = 1; i <= 12; i++) {
+      const numStr = i < 10 ? `0${i}` : `${i}`;
+      const isPremium = r === "A" || r === "B";
+      const isSold =
+        (r === "A" && (i === 4 || i === 5 || i === 7)) ||
+        (r === "C" && (i === 5 || i === 7));
+      generated.push({
+        id: idCounter++,
+        seat_number: `${r}${numStr}`,
+        row: r,
+        seat_type: isPremium ? "PREMIUM" : "REGULAR",
+        is_booked: isSold,
+      });
+    }
+  });
+  return generated;
+}
+
 export default function BookingPage() {
   const { movieId, showId } = useParams();
   const navigate = useNavigate();
   const { user, isAuthenticated, openAuthModal } = useAuth();
   const { selectedTheatre } = useTheatre();
 
-  // Data states
   const [movie, setMovie] = useState(null);
   const [shows, setShows] = useState([]);
+  const [showsLoading, setShowsLoading] = useState(true);
   const [selectedShow, setSelectedShow] = useState(null);
   const [seats, setSeats] = useState([]);
+  const [seatsLoading, setSeatsLoading] = useState(false);
   const [selectedSeatIds, setSelectedSeatIds] = useState([]);
 
-  // Form states (Wireframe Page 6)
   const [fullName, setFullName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("BKASH");
@@ -26,7 +49,6 @@ export default function BookingPage() {
   const [bookingSuccess, setBookingSuccess] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
 
-  // Sample static dates matching Page 6 if show dates aren't set
   const dateTabs = [
     { label: "Thu", day: "6 May", dateStr: "2026-05-06" },
     { label: "Fri", day: "7 May", dateStr: "2026-05-07" },
@@ -38,6 +60,7 @@ export default function BookingPage() {
   useEffect(() => {
     let isMounted = true;
     const fetchInitialData = async () => {
+      setShowsLoading(true);
       try {
         if (movieId) {
           const mRes = await api.get(`/api/movies/${movieId}/`);
@@ -53,15 +76,31 @@ export default function BookingPage() {
         const sRes = await api.get(showUrl);
         if (isMounted) {
           setShows(sRes.data);
-          if (showId) {
-            const matching = sRes.data.find((s) => s.id === parseInt(showId));
-            if (matching) setSelectedShow(matching);
-          } else if (sRes.data.length > 0) {
-            setSelectedShow(sRes.data[0]);
+          const matching = showId
+            ? sRes.data.find((s) => s.id === parseInt(showId))
+            : null;
+          const nextShow = matching || sRes.data[0] || null;
+          setSelectedShow(nextShow);
+          if (!nextShow) {
+            setSeats([]);
+            setSelectedSeatIds([]);
           }
         }
       } catch (err) {
         console.error("Error fetching shows:", err);
+        if (isMounted) {
+          const fallbackShows = [
+            { id: "fallback-1", hall_name: "Hall 1", start_time: "12:50:00", price: 450 },
+            { id: "fallback-2", hall_name: "Hall 1", start_time: "15:00:00", price: 450 },
+            { id: "fallback-3", hall_name: "Hall 1", start_time: "18:00:00", price: 500 },
+          ];
+          setShows(fallbackShows);
+          setSelectedShow(fallbackShows[0]);
+          setSeats(buildFallbackSeats());
+          setSelectedSeatIds([]);
+        }
+      } finally {
+        if (isMounted) setShowsLoading(false);
       }
     };
 
@@ -72,10 +111,13 @@ export default function BookingPage() {
   }, [movieId, showId, selectedTheatre]);
 
   useEffect(() => {
-    if (!selectedShow) return;
+    if (!selectedShow || String(selectedShow.id).startsWith("fallback-")) {
+      return;
+    }
 
     let isMounted = true;
     const fetchSeatsForShow = async () => {
+      setSeatsLoading(true);
       try {
         const res = await api.get(`/api/shows/${selectedShow.id}/seats/`);
         if (isMounted) {
@@ -83,30 +125,12 @@ export default function BookingPage() {
           setSelectedSeatIds([]);
         }
       } catch {
-        // Fallback auditorium generation matching Page 8 (Rows A to G, cols 1 to 12)
         if (isMounted) {
-          const rows = ["A", "B", "C", "D", "E", "F", "G"];
-          const generated = [];
-          let idCounter = 1;
-          rows.forEach((r) => {
-            for (let i = 1; i <= 12; i++) {
-              const numStr = i < 10 ? `0${i}` : `${i}`;
-              const isPremium = r === "A" || r === "B";
-              const isSold =
-                (r === "A" && (i === 4 || i === 5 || i === 7)) ||
-                (r === "C" && (i === 5 || i === 7));
-              generated.push({
-                id: idCounter++,
-                seat_number: `${r}${numStr}`,
-                row: r,
-                seat_type: isPremium ? "PREMIUM" : "REGULAR",
-                is_booked: isSold,
-              });
-            }
-          });
-          setSeats(generated);
+          setSeats(buildFallbackSeats());
           setSelectedSeatIds([]);
         }
+      } finally {
+        if (isMounted) setSeatsLoading(false);
       }
     };
 
@@ -209,7 +233,6 @@ export default function BookingPage() {
     <div className="min-h-screen bg-[#0B0E1E] text-white py-6 px-4 md:px-8">
       <div className="max-w-7xl mx-auto space-y-8">
         
-        {/* Top Header Bar (Wireframe Page 6) */}
         <div className="flex items-center justify-between border-b border-[#D4AF37]/30 pb-4">
           <div className="flex items-center gap-4">
             <button
@@ -228,13 +251,10 @@ export default function BookingPage() {
           </div>
         </div>
 
-        {/* 2-Column Booking Interface (Pages 6 & 8) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
-          {/* Left Column: Date, Showtimes & Seat Grid */}
           <div className="lg:col-span-8 space-y-8">
             
-            {/* 1. Date Selector (Page 6) */}
             <div>
               <h2 className="text-sm font-serif font-semibold text-[#D4AF37] uppercase tracking-wider mb-3">
                 Select Date
@@ -257,59 +277,65 @@ export default function BookingPage() {
               </div>
             </div>
 
-            {/* 2. Showtime Selector by Hall (Page 6) */}
             <div>
               <h2 className="text-sm font-serif font-semibold text-[#D4AF37] uppercase tracking-wider mb-4">
                 Select Show Time
               </h2>
               <div className="space-y-4">
-                {shows.length > 0 ? (
-                  shows.map((show) => {
-                    const isSelected = selectedShow?.id === show.id;
-                    return (
-                      <div
-                        key={show.id}
-                        className="flex flex-wrap items-center gap-4 bg-[#12162A] border border-gray-800 p-4 rounded-xl"
-                      >
-                        <span className="font-serif font-bold text-gray-300 w-24">
-                          {show.hall_name || "Hall 1"}
-                        </span>
-                        <button
-                          onClick={() => setSelectedShow(show)}
-                          className={`px-5 py-2 rounded-lg text-xs font-semibold tracking-wider transition ${
-                            isSelected
-                              ? "bg-[#D4AF37] text-gray-950 shadow-md ring-2 ring-[#D4AF37]"
-                              : "bg-[#27324A] text-gray-200 hover:bg-[#32405F]"
-                          }`}
-                        >
-                          {show.start_time?.slice(0, 5) || "12:50"} ({show.price} BDT)
-                        </button>
-                      </div>
-                    );
-                  })
-                ) : (
-                  <div className="flex flex-wrap items-center gap-4 bg-[#12162A] border border-gray-800 p-4 rounded-xl">
-                    <span className="font-serif font-bold text-gray-300 w-24">Hall 1</span>
-                    <button
-                      onClick={() => setSelectedShow({ id: 99, hall_name: "Hall 1", price: 450 })}
-                      className="px-5 py-2 rounded-lg text-xs font-semibold bg-[#D4AF37] text-gray-950 shadow-md"
+                {showsLoading ? (
+                  <div className="bg-[#12162A] border border-gray-800 p-4 rounded-xl text-xs text-gray-400">
+                    Loading showtimes...
+                  </div>
+                ) : shows.length > 0 ? (
+                  Object.entries(
+                    shows.reduce((acc, show) => {
+                      const hallLabel = show.hall_name || "Hall 1";
+                      if (!acc[hallLabel]) acc[hallLabel] = [];
+                      acc[hallLabel].push(show);
+                      return acc;
+                    }, {})
+                  ).map(([hallLabel, hallShows]) => (
+                    <div
+                      key={hallLabel}
+                      className="flex flex-wrap items-center gap-4 bg-[#12162A] border border-gray-800 p-4 rounded-xl"
                     >
-                      12:50 pm
-                    </button>
-                    <button className="px-5 py-2 rounded-lg text-xs font-semibold bg-[#27324A] text-gray-200 hover:bg-[#32405F]">
-                      3:00 pm
-                    </button>
-                    <button className="px-5 py-2 rounded-lg text-xs font-semibold bg-[#27324A] text-gray-200 hover:bg-[#32405F]">
-                      6:00 pm
-                    </button>
+                      <span className="font-serif font-bold text-gray-300 w-24">
+                        {hallLabel}
+                      </span>
+                      <div className="flex flex-wrap gap-3">
+                        {hallShows.map((show) => {
+                          const isSelected = selectedShow?.id === show.id;
+                          return (
+                            <button
+                              key={show.id}
+                              type="button"
+                              onClick={() => setSelectedShow(show)}
+                              className={`px-5 py-2 rounded-lg text-xs font-semibold tracking-wider transition cursor-pointer ${
+                                isSelected
+                                  ? "bg-[#D4AF37] text-gray-950 shadow-md ring-2 ring-[#D4AF37]"
+                                  : "bg-[#27324A] text-gray-200 hover:bg-[#32405F]"
+                              }`}
+                            >
+                              {show.start_time?.slice(0, 5) || "12:50"} ({show.price} BDT)
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="bg-[#12162A] border border-gray-800 p-4 rounded-xl text-xs text-gray-300">
+                    No showtimes are currently scheduled for this movie at{" "}
+                    <span className="text-[#D4AF37] font-semibold">
+                      {selectedTheatre?.name || "this theatre"}
+                    </span>
+                    .
                   </div>
                 )}
               </div>
             </div>
 
-            {/* 3. Interactive Seat Matrix (Wireframe Page 8) */}
             <div className="bg-[#FAF3E0] text-gray-900 rounded-2xl p-6 md:p-8 shadow-2xl border border-gray-300">
-              {/* Screen Bar */}
               <div className="max-w-md mx-auto mb-10 text-center">
                 <div className="h-6 w-full bg-gradient-to-b from-gray-400 to-gray-200 border-2 border-gray-600 rounded-t-lg shadow-md flex items-center justify-center">
                   <span className="text-xs font-bold tracking-widest text-gray-800 uppercase">
@@ -318,54 +344,62 @@ export default function BookingPage() {
                 </div>
               </div>
 
-              {/* Seat Rows Container */}
-              <div className="space-y-3 max-w-2xl mx-auto overflow-x-auto pb-4">
-                {rows.map((rowLetter) => {
-                  const isPremiumRow = rowLetter === "A" || rowLetter === "B";
-                  const rowSeats = seats.filter((s) => s.row === rowLetter);
+              {seatsLoading ? (
+                <div className="py-16 text-center text-sm font-medium text-gray-600">
+                  Loading auditorium seats...
+                </div>
+              ) : seats.length === 0 ? (
+                <div className="py-16 text-center text-sm font-medium text-gray-600">
+                  Select a scheduled showtime above to view available seats.
+                </div>
+              ) : (
+                <div className="space-y-3 max-w-2xl mx-auto overflow-x-auto pb-4">
+                  {rows.map((rowLetter) => {
+                    const isPremiumRow = rowLetter === "A" || rowLetter === "B";
+                    const rowSeats = seats.filter((s) => s.row === rowLetter);
 
-                  return (
-                    <div
-                      key={rowLetter}
-                      className={`flex items-center gap-2 justify-center p-1 rounded-lg ${
-                        isPremiumRow ? "border-2 border-red-700 bg-red-50/50" : ""
-                      }`}
-                    >
-                      <span className="w-5 text-sm font-bold text-gray-700">{rowLetter}</span>
+                    return (
+                      <div
+                        key={rowLetter}
+                        className={`flex items-center gap-2 justify-center p-1 rounded-lg ${
+                          isPremiumRow ? "border-2 border-red-700 bg-red-50/50" : ""
+                        }`}
+                      >
+                        <span className="w-5 text-sm font-bold text-gray-700">{rowLetter}</span>
 
-                      <div className="flex gap-2">
-                        {rowSeats.map((seat) => {
-                          const isSelected = selectedSeatIds.includes(seat.id);
+                        <div className="flex gap-2">
+                          {rowSeats.map((seat) => {
+                            const isSelected = selectedSeatIds.includes(seat.id);
 
-                          let colorClasses = "bg-[#D4A373] text-white hover:bg-[#BC8A5F]";
-                          if (seat.is_booked) {
-                            colorClasses = "bg-[#4A5568] text-gray-300 cursor-not-allowed opacity-80";
-                          } else if (isSelected) {
-                            colorClasses = "bg-[#10B981] text-white ring-2 ring-green-600 shadow-md";
-                          } else if (seat.seat_type === "PREMIUM") {
-                            colorClasses = "bg-[#8B0000] text-white hover:bg-[#A52A2A]";
-                          }
+                            let colorClasses = "bg-[#D4A373] text-white hover:bg-[#BC8A5F]";
+                            if (seat.is_booked) {
+                              colorClasses = "bg-[#4A5568] text-gray-300 cursor-not-allowed opacity-80";
+                            } else if (isSelected) {
+                              colorClasses = "bg-[#10B981] text-white ring-2 ring-green-600 shadow-md";
+                            } else if (seat.seat_type === "PREMIUM") {
+                              colorClasses = "bg-[#8B0000] text-white hover:bg-[#A52A2A]";
+                            }
 
-                          return (
-                            <button
-                              key={seat.id}
-                              type="button"
-                              disabled={seat.is_booked}
-                              onClick={() => toggleSeatSelection(seat)}
-                              className={`w-8 h-8 rounded text-[10px] font-bold flex items-center justify-center transition shadow-xs ${colorClasses}`}
-                              title={`Seat ${seat.seat_number} - ${seat.seat_type}`}
-                            >
-                              {seat.seat_number}
-                            </button>
-                          );
-                        })}
+                            return (
+                              <button
+                                key={seat.id}
+                                type="button"
+                                disabled={seat.is_booked}
+                                onClick={() => toggleSeatSelection(seat)}
+                                className={`w-8 h-8 rounded text-[10px] font-bold flex items-center justify-center transition shadow-xs ${colorClasses}`}
+                                title={`Seat ${seat.seat_number} - ${seat.seat_type}`}
+                              >
+                                {seat.seat_number}
+                              </button>
+                            );
+                          })}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
+                    );
+                  })}
+                </div>
+              )}
 
-              {/* Legend matching Page 8 */}
               <div className="mt-8 pt-4 border-t border-gray-300 flex flex-wrap items-center justify-center gap-6 text-xs font-semibold text-gray-800">
                 <span className="font-bold">Select your seats:</span>
                 <div className="flex items-center gap-2">
@@ -388,13 +422,11 @@ export default function BookingPage() {
             </div>
           </div>
 
-          {/* Right Column: Ticket Summary Card (Wireframe Page 6) */}
           <div className="lg:col-span-4 bg-[#12162A] border border-[#D4AF37]/30 rounded-2xl p-6 shadow-2xl space-y-6">
             <h2 className="text-lg font-serif font-bold text-[#D4AF37] tracking-wider border-b border-gray-800 pb-3">
               Ticket Summary
             </h2>
 
-            {/* Movie Thumbnail & Header */}
             <div className="flex gap-4 items-center">
               <img
                 src={movie?.poster_url || "https://images.unsplash.com/photo-1635805737707-575885ab0820?q=80&w=200&auto=format&fit=crop"}
@@ -412,7 +444,6 @@ export default function BookingPage() {
               </div>
             </div>
 
-            {/* Summary Details (Page 6) */}
             <div className="space-y-2 text-xs border-y border-gray-800 py-4 text-gray-300">
               <p className="flex justify-between">
                 <span className="text-gray-400">Location:</span>
@@ -440,7 +471,6 @@ export default function BookingPage() {
               </p>
             </div>
 
-            {/* Checkout Form ("Ticket For" - Page 6) */}
             <form onSubmit={handlePurchase} className="space-y-4">
               <h3 className="text-xs font-serif font-bold text-gray-400 uppercase tracking-wider">
                 Ticket For
@@ -470,7 +500,6 @@ export default function BookingPage() {
                 />
               </div>
 
-              {/* Payment selector (Bkash / Nagad) */}
               <div>
                 <label className="block text-[11px] text-gray-300 mb-1">Payment Method:</label>
                 <div className="grid grid-cols-2 gap-2">
